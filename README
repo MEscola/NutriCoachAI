@@ -1,0 +1,125 @@
+## 🧠 NutriCoachAI
+
+NutriCoachAI é um assistente inteligente de performance que utiliza Inteligência Artificial para gerar estratégias personalizadas de treino e nutrição.
+
+A aplicação foi desenvolvida com foco em atletas que buscam praticidade no dia a dia, oferecendo recomendações adaptadas ao perfil e objetivo do usuário.
+
+> ⚠️ Projeto em desenvolvimento: algumas funcionalidades ainda estão sendo aprimoradas.
+
+---
+
+## Problema Resolvido
+
+Muitos praticantes de atividades físicas enfrentam dificuldades para ajustar alimentação e treino de forma personalizada.
+
+O NutriCoachAI resolve esse problema fornecendo sugestões rápidas e inteligentes baseadas em dados do usuário, como horário de treino, objetivo e modalidade.
+
+---
+
+## Tecnologias Utilizadas
+
+### Front-end (Client)
+- Next.js 15+ (App Router)
+- TypeScript
+- Tailwind CSS 4
+- shadcn/ui (Radix UI)
+- Sonner (notificações)
+- Lucide React (ícones)
+
+### Back-end (Server)
+- Python 3.10+
+- FastAPI
+- Pydantic (validação de dados)
+- Slowapi (rate limiting)
+
+### Inteligência Artificial
+- Google Gemini API (gemini-1.5-flash)
+
+---
+
+## Funcionalidades
+
+- Geração de planos personalizados com IA
+- Identificação da intenção do usuário (plano completo ou dúvida específica)
+- Suporte a múltiplas modalidades:
+  - CrossFit
+  - Musculação
+  - Corrida
+- Sugestões de pré e pós-treino baseadas no horário
+- Persistência de dados com localStorage
+- Compartilhamento via WhatsApp
+
+> Algumas funcionalidades estão em desenvolvimento e podem sofrer alterações.
+
+---
+
+## Estrutura de Dados
+
+O backend utiliza Pydantic para validação dos dados:
+
+```python
+class DadosUsuario(BaseModel):
+    horario_treino: str
+    idade: int
+    peso: float
+    sexo: str
+    objetivo: str
+    tipo_treino: str
+    mensagem: Optional[str] = ""
+```
+## Exemplo de Requisição
+
+```
+{
+  "horario_treino": "07:00",
+  "idade": 30,
+  "peso": 70,
+  "sexo": "Feminino",
+  "objetivo": "Hipertrofia",
+  "tipo_treino": "CrossFit",
+  "mensagem": "O que comer antes do treino?"
+}
+```
+## Intalação e Configuração
+
+```bash
+cd server
+python -m venv venv
+venv\Scripts\activate
+pip install fastapi uvicorn google-generativeai python-dotenv slowapi pydantic
+
+```
+Crie um arquivo .env
+
+CHAVE_API=SUA_CHAVE_GEMINI_AQUI
+
+Para rodar o Back-end
+
+```bash
+uvicorn main:app --reload
+ ```
+
+Front-end
+
+cd front-app-fit
+npm install
+npm run dev
+
+## Segurança
+
+Rate limiting por IP com Slowapi
+Validação de dados com Pydantic
+
+## Uso de Inteligência Artificial
+
+Este projeto utiliza IA (Google Gemini) para geração de respostas personalizadas.
+
+Durante o desenvolvimento, ferramentas de IA também foram utilizadas como apoio para:
+
+-estruturação de lógica
+-otimização de código
+-melhoria de UX
+
+Autor
+
+Márcia Escolástico
