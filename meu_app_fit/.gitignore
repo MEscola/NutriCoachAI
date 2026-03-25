@@ -1,1 +1,33 @@
+.# 🔐 Variáveis de ambiente
 .env
+.env.*
+
+# 🐍 Ambiente virtual
+venv/
+.venv/
+env/
+
+# 📦 Cache Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 🧪 Testes / coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# 🧰 IDE / Editor
+.vscode/
+.idea/
+
+# 🗂️ Logs
+*.log
+
+# 🗄️ Banco de dados local
+*.sqlite3
+
+# 📁 Arquivos do sistema
+.DS_Store
+Thumbs.db
