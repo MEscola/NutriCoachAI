@@ -1,0 +1,4 @@
+{
+ "python.defaultInterpreterPath": "/home/marcia/pocket_nutri/meu_app_fit/venv/bin/python",
+  "python.analysis.extraPaths": ["./"]
+}
