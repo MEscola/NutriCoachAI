@@ -25,7 +25,7 @@ PROIBIDO:
 - NÃO incluir café, almoço, jantar completo
 
 FAÇA APENAS:
-Responder a pergunta de forma direta, prática e objetiva.
+Responder a pergunta de forma direta, prática e objetiva e mais assertiva possivel.
 
 Formato obrigatório:
 
@@ -73,21 +73,16 @@ Formato:
 
 {{
   "alimentacao": {{
+    "pre_treino": "",
     "cafe": "",
+    "pos_treino": "",
     "almoco": "",
     "jantar": "",
-    "lanches": ""
-  }},
-  "estrategia_treino": {{
-    "como_atingir_objetivo": "",
-    "foco": "",
-    "metodo": ""
-  }},
-  "pre_treino": "",
-  "pos_treino": "",
-  "dica_extra": "",
-  "pulo_do_gato": ""
+    "lanches": "",
+}},
+ "dica_extra": ""
 }}
+
 
 Dados:
 - Idade: {dados.idade}
@@ -96,7 +91,7 @@ Dados:
 - Objetivo: {dados.objetivo}
 - Tipo: {dados.tipo_treino}
 - Horário: {dados.horario_treino}
-- tipo: {dados.tipo}
+
 
 Pedido:
 {dados.mensagem if dados.mensagem else "Plano completo do dia"}
@@ -105,8 +100,7 @@ Regras:
 - Seja direto
 - Preencha todos os campos
 - Não escreva nada fora do JSON
-- O campo 'como_atingir_objetivo' deve ser motivador.
-- Use terminologia de {dados.tipo_treino} (Ex: WOD, AMRAP se CrossFit | Super-set se Musculação | Pace se Corrida).
+
 """
 
     response = model.generate_content(prompt)
@@ -126,8 +120,8 @@ Regras:
 # CONTROLLER DE FLUXO
 def processar_requisicao(dados):
     if dados.tipo == "duvida":
+        
         return gerar_resposta_duvida(dados)
     else:
         return gerar_plano(dados)
 
-    
