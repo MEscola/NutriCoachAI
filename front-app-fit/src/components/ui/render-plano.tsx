@@ -24,47 +24,13 @@ export default function RenderPlano({ data }: any) {
         </div>
 
         <div className="grid gap-2">
+          <PlanCard title="⚡ Pré-treino" content={data.alimentacao?.pre_treino} />
           <PlanCard title="🍳 Café da manhã" content={data.alimentacao?.cafe} />
+          <PlanCard title="🔥 Pós-treino" content={data.alimentacao?.pos_treino} />
           <PlanCard title="🍗 Almoço" content={data.alimentacao?.almoco} />
           <PlanCard title="🌙 Jantar" content={data.alimentacao?.jantar} />
           <PlanCard title="🥪 Lanches" content={data.alimentacao?.lanches} />
         </div>
-      </div>
-
-      {/* ===== TREINO ===== */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2 text-[10px] uppercase text-zinc-400 font-bold tracking-widest">
-          <Dumbbell size={12} /> Estratégia de treino
-        </div>
-
-        <div className="grid gap-2">
-          <PlanCard
-            title="🎯 Como atingir o objetivo"
-            content={data.estrategia_treino?.como_atingir_objetivo}
-          />
-
-          <PlanCard
-            title="🔥 Foco do dia"
-            content={data.estrategia_treino?.foco}
-          />
-
-          <PlanCard
-            title="📈 Método"
-            content={data.estrategia_treino?.metodo}
-          />
-        </div>
-      </div>
-
-      {/* ===== PRÉ / PÓS ===== */}
-      <div className="grid grid-cols-1 gap-2">
-        <PlanCard
-          title="⚡ Pré-treino"
-          content={data.pre_treino}
-        />
-        <PlanCard
-          title="🔥 Pós-treino"
-          content={data.pos_treino}
-        />
       </div>
 
       {/* ===== DICA EXTRA ===== */}
@@ -74,7 +40,7 @@ export default function RenderPlano({ data }: any) {
         </div>
 
         <p className="text-sm text-zinc-200 leading-relaxed">
-          {data.dica_extra}
+          {data.dica_extra} 
         </p>
       </div>
     </div>
