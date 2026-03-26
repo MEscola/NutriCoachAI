@@ -104,6 +104,14 @@ export default function Home() {
         body: JSON.stringify({ ...data, tipo }),
       });
 
+    //DEBUG
+    if (!res.ok) {
+      const error = await res.json();
+      console.error("Erro no Backend", error);
+      toast.error("Resposta inesperada do servidor.");
+      return;
+    }
+
       const result = await res.json();
 
       // substitui loading
@@ -113,8 +121,9 @@ export default function Home() {
         if (result.tipo === "duvida") {
   updated[updated.length - 1] = {
     role: "assistant",
-    content: result.resposta || "Não consegui gerar resposta 😅",
+    content: result.data?.resposta || "Não consegui gerar resposta 😅",
   };
+
 } else if (result.tipo === "plano") {
   updated[updated.length - 1] = {
     role: "assistant",
@@ -156,7 +165,18 @@ export default function Home() {
     }
   };
 
-  const perfil = JSON.parse(localStorage.getItem("perfil") || "{}");
+  let perfil: any = {};
+try {
+  perfil = JSON.parse(localStorage.getItem("perfil") || "{}");
+} catch {
+  perfil = {};
+}
+
+  const gerarPlano = () => {
+  handleSubmit((data) => {
+    onSubmit({ ...data, mensagem: "" });
+  })();
+};
 
   return (
     <main className="min-h-screen bg-black text-zinc-100 flex justify-center p-4 dark">
@@ -215,8 +235,8 @@ export default function Home() {
                 {!perfilPreenchido && (
                   <>
                     <div className="grid grid-cols-2 gap-4">
-                      <DSInput label="Idade" type="number" {...register("idade")} />
-                      <DSInput label="Peso" type="number" {...register("peso")} />
+                      <DSInput label="Idade" type="number" error={errors.idade?.message} {...register("idade")} />
+                      <DSInput label="Peso" type="number" error={errors.peso?.message} {...register("peso")} />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -236,9 +256,9 @@ export default function Home() {
 
                     <DSSelect label="Tipo de treino" {...register("tipo_treino")}>
                       <option value="">Selecione</option>
-                      <option value="CrossFit">CrossFit</option>
-                      <option value="Musculação">Musculação</option>
-                      <option value="Corrida">Corrida</option>
+                      <option value="crossfit">CrossFit</option>
+                      <option value="musculacao">Musculação</option>
+                      <option value="corrida">Corrida</option>
                     </DSSelect>
 
                     <DSInput
@@ -265,12 +285,8 @@ export default function Home() {
 
                 {/*  BOTÃO PLANO */}
                 <Button
-                  type="submit"
-                  disabled={!isValid || isSubmitting}
-                  onClick={() => {
-                    // força plano
-                    reset({ ...perfil, mensagem: "" });
-                  }}
+                  type="button"
+                  onClick={gerarPlano}
                   className="w-full bg-primary text-black font-bold h-14 rounded-2xl"
                 >
                   Gerar Plano Completo

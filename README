@@ -96,7 +96,7 @@ CHAVE_API=SUA_CHAVE_GEMINI_AQUI
 Para rodar o Back-end
 
 ```bash
-uvicorn main:app --reload
+uvicorn app.main:app --reload
  ```
 
 Front-end
