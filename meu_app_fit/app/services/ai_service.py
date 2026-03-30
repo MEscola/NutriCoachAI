@@ -2,6 +2,7 @@ import json
 import os
 import google.generativeai as genai
 from dotenv import load_dotenv
+from app.models.db_fake import PLANS_DB
 
 load_dotenv()
 
@@ -10,25 +11,19 @@ CHAVE_API = os.getenv("CHAVE_API")
 genai.configure(api_key=CHAVE_API)
 model = genai.GenerativeModel('gemini-3-flash-preview')
 
-# FLUXO 1 - DÚVIDA
+
+def salvar_plano(plano):
+    PLANS_DB.append(plano)
+
+
+# FLUXO DÚVIDA
 def gerar_resposta_duvida(dados):
-    
     prompt = f"""
 Você é um coach de {dados.tipo_treino} e nutricionista.
 
-IMPORTANTE:
-O usuário fez uma PERGUNTA ESPECÍFICA.
+Responda APENAS a pergunta de forma direta.
 
-PROIBIDO:
-- NÃO gerar plano completo
-- NÃO sugerir rotina completa
-- NÃO incluir café, almoço, jantar completo
-
-FAÇA APENAS:
-Responder a pergunta de forma direta, prática e objetiva e mais assertiva possivel.
-
-Formato obrigatório:
-
+Formato:
 {{
   "resposta": ""
 }}
@@ -36,13 +31,7 @@ Formato obrigatório:
 Pergunta:
 {dados.mensagem}
 
-Contexto (use apenas se necessário):
-- Idade: {dados.idade}
-- Peso: {dados.peso}
-- Objetivo: {dados.objetivo}
-
-REGRAS:
-- Resposta curta
+Regras:
 - Máximo 3 frases
 - Sem texto fora do JSON
 """
@@ -50,7 +39,6 @@ REGRAS:
     response = model.generate_content(prompt)
     text = response.text.strip()
 
-    # extrai JSON
     inicio = text.find("{")
     fim = text.rfind("}") + 1
     json_str = text[inicio:fim]
@@ -62,14 +50,12 @@ REGRAS:
         return {"erro": "Falha ao gerar resposta"}
 
 
-# FLUXO 2 - PLANO DO DIA
+# FLUXO PLANO
 def gerar_plano(dados):
     prompt = f"""
-Você é um coach de {dados.tipo_treino} e nutricionista esportivo.
+Você é um coach de {dados.tipo_treino} e nutricionista.
 
-Responda APENAS em JSON válido.
-
-Formato:
+Formato JSON:
 
 {{
   "alimentacao": {{
@@ -78,11 +64,10 @@ Formato:
     "pos_treino": "",
     "almoco": "",
     "jantar": "",
-    "lanches": "",
-}},
- "dica_extra": ""
+    "lanches": ""
+  }},
+  "dica_extra": ""
 }}
-
 
 Dados:
 - Idade: {dados.idade}
@@ -92,36 +77,31 @@ Dados:
 - Tipo: {dados.tipo_treino}
 - Horário: {dados.horario_treino}
 
-
-Pedido:
-{dados.mensagem if dados.mensagem else "Plano completo do dia"}
-
 Regras:
-- Seja direto
-- Preencha todos os campos
-- Não escreva nada fora do JSON
-
+- Simples e prático
+- Sem texto fora do JSON
 """
 
     response = model.generate_content(prompt)
     text = response.text.strip()
 
-     # limpa JSON
     inicio = text.find("{")
     fim = text.rfind("}") + 1
     json_str = text[inicio:fim]
 
     try:
         data = json.loads(json_str)
-        return {"tipo": "plano", "data": data}
+
+        plano = {
+            "user_id": dados.user_id,
+            "date": "2026-03-27",
+            "alimentacao": data["alimentacao"],
+            "dica_extra": data["dica_extra"]
+        }
+
+        salvar_plano(plano)
+
+        return {"tipo": "plano", "data": plano}
+
     except:
         return {"erro": "Falha ao gerar plano"}
-    
-# CONTROLLER DE FLUXO
-def processar_requisicao(dados):
-    if dados.tipo == "duvida":
-        
-        return gerar_resposta_duvida(dados)
-    else:
-        return gerar_plano(dados)
-

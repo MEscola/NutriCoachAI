@@ -236,7 +236,7 @@ try {
                   <>
                     <div className="grid grid-cols-2 gap-4">
                       <DSInput label="Idade" type="number" error={errors.idade?.message} {...register("idade")} />
-                      <DSInput label="Peso" type="number" error={errors.peso?.message} {...register("peso")} />
+                      <DSInput label="Peso" type="number" step="0.1" error={errors.peso?.message} {...register("peso")} />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
