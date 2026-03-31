@@ -31,3 +31,6 @@ htmlcov/
 # 📁 Arquivos do sistema
 .DS_Store
 Thumbs.db
+
+#Alembic
+alembic/versions/*.py

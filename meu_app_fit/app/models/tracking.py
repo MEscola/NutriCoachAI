@@ -1,7 +1,7 @@
 # models/tracking.py
 
-from sqlalchemy import Column, String, JSON
-from app.database import Base
+from sqlalchemy import Column, String, Date, JSON
+from app.database.db import Base
 import uuid
 
 class Tracking(Base):
