@@ -1,13 +1,13 @@
 from pydantic import BaseModel
 from typing import List
 
-class MealStatus(BaseModel):
+class RefeiçãoStatus(BaseModel):
     id: int
     user_id: int
-    meal_id: int
+    refeição_id: int
     status: str  # Ex: "done", "missed"
 
-class DailyTracking(BaseModel):
+class MonitoramentoDiario(BaseModel):
     user_id: int
     date: str  # Formato YYYY-MM-DD
-    meals_status: List[MealStatus]
+    refeicoes_status: List[RefeiçãoStatus]

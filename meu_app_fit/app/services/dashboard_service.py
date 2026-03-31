@@ -11,10 +11,10 @@ def calcular_aderencia(refeicoes):
     return round((feitas / total) * 100, 2)
 
 
-def gerar_mensagem(aderencia):
-    if aderencia >= 80:
+def gerar_mensagem(frequencia):
+    if frequencia >= 80:
         return "Excelente!"
-    elif aderencia >= 50:
+    elif frequencia >= 50:
         return "Bom, mas pode melhorar"
     else:
         return "Vamos melhorar amanhã"
@@ -26,9 +26,9 @@ def get_dashboard(user_id):
     if not tracking:
         return {"message": "Sem dados ainda"}
 
-    aderencia = calcular_aderencia(tracking["refeicoes"])
+    frequencia = calcular_frequencia(tracking["refeicoes"])
 
     return {
-        "aderencia": aderencia,
-        "mensagem": gerar_mensagem(aderencia)
+        "frequencia": frequencia,
+        "mensagem": gerar_mensagem(frequencia)
     }
