@@ -51,7 +51,7 @@ Regras:
 
 
 # FLUXO PLANO
-def gerar_plano(dados):
+def gerar_plano(user_id, dados): 
     prompt = f"""
 Você é um coach de {dados.tipo_treino} e nutricionista.
 
@@ -93,7 +93,7 @@ Regras:
         data = json.loads(json_str)
 
         plano = {
-            "user_id": dados.user_id,
+            "user_id": str(user_id), # Substitua pelo ID real do usuário
             "date": "2026-03-27",
             "alimentacao": data["alimentacao"],
             "dica_extra": data["dica_extra"]

@@ -1,7 +1,8 @@
+from uuid import UUID
 from app.services.tracking_service import get_tracking
 
 
-def calcular_aderencia(refeicoes):
+def calcular_aderencia(refeicoes: dict):
     total = len(refeicoes)
     feitas = sum(1 for r in refeicoes.values() if r)
 
@@ -11,22 +12,21 @@ def calcular_aderencia(refeicoes):
     return round((feitas / total) * 100, 2)
 
 
-def gerar_mensagem(frequencia):
+def gerar_mensagem(frequencia: float):
     if frequencia >= 80:
         return "Excelente!"
     elif frequencia >= 50:
         return "Bom, mas pode melhorar"
-    else:
-        return "Vamos melhorar amanhã"
+    return "Vamos melhorar amanhã"
 
 
-def get_dashboard(user_id):
+def get_dashboard(user_id: UUID):
     tracking = get_tracking(user_id)
 
     if not tracking:
         return {"message": "Sem dados ainda"}
 
-    frequencia = calcular_frequencia(tracking["refeicoes"])
+    frequencia = calcular_aderencia(tracking["refeicoes"])
 
     return {
         "frequencia": frequencia,

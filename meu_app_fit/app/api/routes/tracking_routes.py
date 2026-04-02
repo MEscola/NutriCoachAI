@@ -1,10 +1,19 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, status
+from sqlalchemy.orm import Session
+
+from app.schemas.tracking import TrackingCreate, TrackingResponse
 from app.services.tracking_service import salvar_tracking
+from app.api.deps import get_current_user
+from app.models.user import User
+from app.db.session import get_db
 
-router = APIRouter()
+router = APIRouter(prefix="/tracking", tags=["tracking"])
 
-@router.post("/tracking")
-def tracking(data: dict):
-    
-    salvar_tracking(data)
-    return {"message": "Tracking salvo com sucesso"}
+
+@router.post("/", response_model=TrackingResponse, status_code=status.HTTP_201_CREATED)
+def create_tracking(
+    data: TrackingCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    return salvar_tracking(db, current_user.id, data)

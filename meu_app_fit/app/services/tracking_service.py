@@ -1,12 +1,33 @@
-from app.models.db_fake import TRACKING_DB
+from sqlalchemy.orm import Session
+from uuid import UUID
+
+from app.models.tracking import Tracking
+from app.schemas.tracking import TrackingCreate
 
 
-def salvar_tracking(data):
-    TRACKING_DB.append(data)
+def salvar_tracking(db: Session, user_id: UUID, data: TrackingCreate):
+    # 🔒 verificar se já existe (mesmo dia)
+    existing = (
+        db.query(Tracking)
+        .filter(Tracking.user_id == user_id, Tracking.date == data.date)
+        .first()
+    )
 
+    if existing:
+        # 🔒 update seguro
+        existing.refeicoes = data.refeicoes
+        db.commit()
+        db.refresh(existing)
+        return existing
 
-def get_tracking(user_id):
-    for t in reversed(TRACKING_DB):
-        if t["user_id"] == user_id:
-            return t
-    return None
+    tracking = Tracking(
+        user_id=user_id,
+        date=data.date,
+        refeicoes=data.refeicoes
+    )
+
+    db.add(tracking)
+    db.commit()
+    db.refresh(tracking)
+
+    return tracking

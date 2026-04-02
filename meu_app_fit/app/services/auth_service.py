@@ -1,3 +1,5 @@
+from http.client import HTTPException
+
 from sqlalchemy.orm import Session
 from app.schemas.auth import UserCreate, UserLogin
 from app.repositories.user_repository import get_user_by_email, create_user
@@ -9,11 +11,12 @@ def register_user(db: Session, data: UserCreate):
 
     if existing_user:
         # NÃO revelar se já existe
-        return None
-    #raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email já registrado") 
-    #!Important - decidir se queremos revelar ou não a existência do email. Anti-enumeração é mais seguro, mas pode ser menos amigável.
-
-    hashed = hash_password(data.password)
+        #return None    #!Important - decidir se queremos revelar ou não a existência do email. Anti-enumeração é mais seguro, mas pode ser menos amigável.
+       
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, 
+            detail="Invalid credentials"  # mensagem genérica para evitar enumeração
+        )
 
     user = create_user(db, data.email, hashed)
 
@@ -26,12 +29,18 @@ def login_user(db: Session, data: UserLogin):
     user = get_user_by_email(db, data.email)
 
     # mensagem genérica (anti-enumeração)
-    if not user:
-        return None
+def login_user(db: Session, data: UserLogin):
 
-    if not verify_password(data.password, user.hashed_password):
-        return None
+    user = get_user_by_email(db, data.email)
 
-    return create_access_token(str(user.id)) 
-    #!Important - aqui também, a mensagem de erro é genérica para evitar enumeração. Decidir se queremos revelar ou não o motivo do erro.
-    #return {"access_token": token, "token_type": "bearer"} - se quisermos seguir o padrão OAuth2, mas para simplicidade, podemos retornar só o token.
+    if not user or not verify_password(data.password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials"
+        )
+
+    token = create_access_token(str(user.id))
+
+    return {"access_token": token, "token_type": "bearer"} 
+ 
+    # seguir o padrão OAuth2, mas para simplicidade, podemos retornar só o token.
