@@ -6,9 +6,9 @@ from app.models.db_fake import PLANS_DB
 
 load_dotenv()
 
-CHAVE_API = os.getenv("CHAVE_API")
+CHAVE_API_GEMINI = os.getenv("CHAVE_API_GEMINI")
 
-genai.configure(api_key=CHAVE_API)
+genai.configure(api_key=CHAVE_API_GEMINI)
 model = genai.GenerativeModel('gemini-3-flash-preview')
 
 

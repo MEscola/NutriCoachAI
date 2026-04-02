@@ -1,15 +1,21 @@
-
+from sqlalchemy import Column, String, DateTime, Boolean
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.sql import func
 import uuid
-from sqlalchemy import Column, String
-from app.database.db import Base
+
+from app.db.base import Base
 
 
-class Users(Base):
+class User(Base):
     __tablename__ = "users"
 
-    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    name = Column(String, nullable=False)
-    idade = Column(String, nullable=False)
-    peso = Column(String, nullable=False)
-    altura = Column(String, nullable=False)
-    objetivo = Column(String, nullable=False)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+
+    is_active = Column(Boolean, default=True, nullable=False)
+    is_admin = Column(Boolean, default=False, nullable=False)
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

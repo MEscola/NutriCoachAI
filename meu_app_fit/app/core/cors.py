@@ -1,13 +1,14 @@
 import os
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
+from meu_app_fit.app.core import settings
 
-load_dotenv()
+
+
 
 def setup_cors(app):
     ENV = os.getenv("ENV", "dev")
 
-    origins = ["*"] if ENV == "dev" else [
+    origins = ["*"] if settings.ENV == "dev" else [
         "https://seu-app.vercel.app"
     ]
 
@@ -15,6 +16,6 @@ def setup_cors(app):
         CORSMiddleware,
         allow_origins=origins,
         allow_credentials=True,
-        allow_methods=["POST"],
+        allow_methods=["*"],
         allow_headers=["*"],
     )
