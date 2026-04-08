@@ -7,6 +7,7 @@ import uuid
 
 from app.db.base import Base
 
+
 class Tracking(Base):
     __tablename__ = "tracking"
 

@@ -1,3 +1,5 @@
-from app.database.db import Base
-from .plan import Plan
-from .tracking import Tracking
+from app.db.base import Base
+
+from app.models.user import User
+from app.models.plan import Plan
+from app.models.tracking import Tracking

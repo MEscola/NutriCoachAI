@@ -1,0 +1,12 @@
+[project]
+name = "meu-app-fit"
+version = "0.1.0"
+description = "Backend do NutriCoachAI"
+authors = [
+  { name = "Marcia" }
+]
+
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["."]

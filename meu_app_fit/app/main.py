@@ -5,7 +5,7 @@ from app.core.settings import settings
 from app.core.logging import setup_logging
 from app.routes import auth_routes
 
-from app.database.migrations import run_migrations
+from app.db.migrations import run_migrations
 
 from app.routes import ai_routes, tracking_routes, dash_routes
 

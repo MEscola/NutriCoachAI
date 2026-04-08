@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = Field(..., description="URL de conexão com o banco")
 
     # Gemini IA
-    GEMINI_API_KEY: str = Field(..., description="API Key do Gemini")
+    GEMINI_API_KEY: str | None = None #opcional, pode ser carregada do .env, o alembic não precisa disso
 
     # Ambiente
     ENV: str = "dev"

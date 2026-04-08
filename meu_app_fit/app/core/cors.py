@@ -1,6 +1,6 @@
 import os
 from fastapi.middleware.cors import CORSMiddleware
-from meu_app_fit.app.core import settings
+from app.core import settings
 
 
 
