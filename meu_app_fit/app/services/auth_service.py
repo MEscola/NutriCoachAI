@@ -1,9 +1,9 @@
-from http.client import HTTPException
+from fastapi import HTTPException, status
 
 from sqlalchemy.orm import Session
 from app.schemas.auth import UserCreate, UserLogin
 from app.repositories.user_repository import get_user_by_email, create_user
-from app.core.security import hash_password, verify_password, create_access_token
+from app.core.security import create_refresh_token, hash_password, verify_password, create_access_token
 
 
 def register_user(db: Session, data: UserCreate):
@@ -18,15 +18,14 @@ def register_user(db: Session, data: UserCreate):
             detail="Invalid credentials"  # mensagem genérica para evitar enumeração
         )
 
+    hashed = hash_password(data.password)
     user = create_user(db, data.email, hashed)
-
     token = create_access_token(str(user.id))
+    refresh_token = create_refresh_token(str(user.id))
 
-    return token
+    return {"access_token": token, "refresh_token": refresh_token, "token_type": "bearer"}
 
-
-def login_user(db: Session, data: UserLogin):
-    user = get_user_by_email(db, data.email)
+   
 
     # mensagem genérica (anti-enumeração)
 def login_user(db: Session, data: UserLogin):
@@ -40,7 +39,9 @@ def login_user(db: Session, data: UserLogin):
         )
 
     token = create_access_token(str(user.id))
+    refresh_token = create_refresh_token(str(user.id))
+    
+    return {"access_token": token, "refresh_token": refresh_token, "token_type": "bearer"}
 
-    return {"access_token": token, "token_type": "bearer"} 
  
     # seguir o padrão OAuth2, mas para simplicidade, podemos retornar só o token.

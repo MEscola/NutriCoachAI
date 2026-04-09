@@ -6,7 +6,7 @@ from app.schemas.tracking import TrackingCreate
 
 
 def salvar_tracking(db: Session, user_id: UUID, data: TrackingCreate):
-    # 🔒 verificar se já existe (mesmo dia)
+    #verificar se já existe (mesmo dia)
     existing = (
         db.query(Tracking)
         .filter(Tracking.user_id == user_id, Tracking.date == data.date)
@@ -14,7 +14,7 @@ def salvar_tracking(db: Session, user_id: UUID, data: TrackingCreate):
     )
 
     if existing:
-        # 🔒 update seguro
+        # update seguro
         existing.refeicoes = data.refeicoes
         db.commit()
         db.refresh(existing)

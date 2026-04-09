@@ -1,25 +1,42 @@
+from typing_extensions import Annotated
 from uuid import UUID
-
-from proto import Enum, Field
-from pydantic import BaseModel
 from datetime import date
 from enum import Enum
 from typing import List
 
+from pydantic import BaseModel, Field
+
+
+# ENUM
 class RefeicaoStatusEnum(str, Enum): 
     done = "done"
     missed = "missed"
 
-class RefeicaoStatus(BaseModel):
+
+# CREATE
+class RefeicaoStatusCreate(BaseModel):
+    refeicao_id: int
+    status: RefeicaoStatusEnum
+
+
+class TrackingCreate(BaseModel):
+    date: date
+    refeicoes: Annotated[
+        List[RefeicaoStatusCreate],
+        Field(min_items=1, max_items=10)
+    ]
+
+
+# RESPONSE
+class RefeicaoStatusResponse(BaseModel):
     id: int
     user_id: UUID
     refeicao_id: int
     status: RefeicaoStatusEnum
 
-class MonitoramentoDiario(BaseModel):
+
+class TrackingResponse(BaseModel):
+    id: UUID
     user_id: UUID
-    date: date  
-    refeicoes_status: List[RefeicaoStatus] = Field(
-        min_length=1,
-        max_length=10 
-    )
+    date: date
+    refeicoes: List[RefeicaoStatusResponse]

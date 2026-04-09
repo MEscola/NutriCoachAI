@@ -1,12 +1,12 @@
 import os
 from fastapi.middleware.cors import CORSMiddleware
-from app.core import settings
+from app.core.settings import settings
 
 
 
 
 def setup_cors(app):
-    ENV = os.getenv("ENV", "dev")
+    #ENV = os.getenv("ENV", "dev")
 
     origins = ["*"] if settings.ENV == "dev" else [
         "https://seu-app.vercel.app"

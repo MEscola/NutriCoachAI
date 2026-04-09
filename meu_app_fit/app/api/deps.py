@@ -4,12 +4,12 @@ from sqlalchemy.orm import Session
 
 from app.core.security import decode_token
 from app.models.user import User
-from app.database.session import get_db
+from app.db.session import get_db
 
 security = HTTPBearer()
 
 
-def get_current_user(
+def get_current_user( 
     credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db),
 ):
@@ -26,3 +26,16 @@ def get_current_user(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
 
     return user
+
+"""
+deps.py
+
+Centraliza dependências reutilizáveis da aplicação.
+
+Exemplos:
+- get_current_user → autenticação - 
+    dependência que vamos usar para proteger rotas, garantindo que só usuários autenticados possam acessá-las.
+
+- get_db → sessão do banco
+- outras dependências compartilhadas entre rotas
+"""

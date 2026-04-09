@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = Field(..., description="Chave secreta da aplicação")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15  # curto (seguro)
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7     # longo (menos seguro, mas necessário para refresh)
 
     # Banco de dados
     DATABASE_URL: str = Field(..., description="URL de conexão com o banco")

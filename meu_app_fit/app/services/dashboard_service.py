@@ -1,5 +1,5 @@
 from uuid import UUID
-from app.services.tracking_service import get_tracking
+from app.services.tracking_service import salvar_tracking
 
 
 def calcular_aderencia(refeicoes: dict):

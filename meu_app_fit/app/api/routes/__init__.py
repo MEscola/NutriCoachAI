@@ -1,4 +1,1 @@
-from ...routes import ai_routes
-from ...routes import tracking_routes
-from ...routes import dash_routes
-from ...routes import auth_routes
+from . import ai_routes, dash_routes, auth_routes, plan_routes, tracking_routes

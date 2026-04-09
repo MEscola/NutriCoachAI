@@ -1,7 +1,7 @@
 from datetime import date
-from click import UUID
-from pydantic import BaseModel, Field
-from typing import List
+from uuid import UUID
+from pydantic import BaseModel, ConfigDict, Field
+from typing import Annotated, List
 
 class Refeicao(BaseModel):
     id: int 
@@ -14,10 +14,10 @@ class Refeicao(BaseModel):
 class PlanCreate(BaseModel):
     date: date
 
-    refeicoes: List[Refeicao] = Field(
-        min_length=1,
-        max_length=10
-    )
+    refeicoes: Annotated[
+    List[Refeicao],
+    Field(min_items=1, max_items=10)
+]
 
 class PlanResponse(BaseModel):
     id: UUID
@@ -25,5 +25,4 @@ class PlanResponse(BaseModel):
     date: date
     refeicoes: List[Refeicao]
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

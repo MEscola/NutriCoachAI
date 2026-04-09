@@ -2,7 +2,7 @@ import json
 import os
 import google.generativeai as genai
 from dotenv import load_dotenv
-from app.models.db_fake import PLANS_DB
+
 
 load_dotenv()
 
@@ -13,7 +13,16 @@ model = genai.GenerativeModel('gemini-3-flash-preview')
 
 
 def salvar_plano(plano):
-    PLANS_DB.append(plano)
+    # Aqui você pode implementar a lógica para salvar o plano no banco de dados
+    # Por exemplo, usando SQLAlchemy:
+    # from app.db import SessionLocal
+    # from app.models import Plano
+    #
+    # db = SessionLocal()
+    # novo_plano = Plano(**plano)
+    # db.add(novo_plano)
+    # db.commit()
+    pass
 
 
 # FLUXO DÚVIDA
