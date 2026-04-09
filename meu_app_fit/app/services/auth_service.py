@@ -23,6 +23,11 @@ def register_user(db: Session, data: UserCreate):
     token = create_access_token(str(user.id))
     refresh_token = create_refresh_token(str(user.id))
 
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    print(f"USER CRIADO: {user.email} and id: {user.id}") #!DEBUG
+
     return {"access_token": token, "refresh_token": refresh_token, "token_type": "bearer"}
 
    

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.core.security import decode_token
 from app.models.user import User
 from app.db.session import get_db
-
+from app.core.exceptions import UnauthorizedException
 security = HTTPBearer()
 
 
@@ -18,12 +18,12 @@ def get_current_user(
     user_id = decode_token(token)
 
     if not user_id:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+        raise UnauthorizedException()
 
     user = db.query(User).filter(User.id == user_id).first()
 
-    if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+    if not user or not user.is_active:
+        raise UnauthorizedException()
 
     return user
 
