@@ -1,5 +1,6 @@
 from sqlalchemy import Column, String, Date, ForeignKey, DateTime, Index
 from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 import uuid
 
@@ -26,3 +27,5 @@ class Plan(Base):
     __table_args__ = (
         Index("idx_plans_user_date", "user_id", "date", unique=True), # Garante que cada usuário tenha apenas um plano por dia
     ) 
+
+    user = relationship("User", back_populates="plans")

@@ -6,6 +6,7 @@ from app.services.tracking_service import salvar_tracking
 from app.api.deps import get_current_user
 from app.models.user import User
 from app.db.session import get_db
+from meu_app_fit.app.models.tracking import Tracking
 
 router = APIRouter(prefix="/tracking", tags=["tracking"])
 
@@ -17,3 +18,14 @@ def create_tracking(
     db: Session = Depends(get_db),
 ):
     return salvar_tracking(db, current_user.id, data)
+
+
+
+@router.get("/", response_model=list[TrackingResponse])
+def list_tracking(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    return db.query(Tracking).filter(
+        Tracking.user_id == current_user.id
+    ).all()
