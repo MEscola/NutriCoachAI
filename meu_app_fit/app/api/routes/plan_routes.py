@@ -6,7 +6,7 @@ from app.schemas.plan import PlanCreate, PlanResponse
 
 from app.api.deps import get_current_user
 from app.models.user import User
-from meu_app_fit.app.db.session import get_db
+from app.db.session import get_db
 
 
 router = APIRouter(prefix="/plans", tags=["plans"])

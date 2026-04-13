@@ -6,7 +6,7 @@ from app.services.tracking_service import salvar_tracking
 from app.api.deps import get_current_user
 from app.models.user import User
 from app.db.session import get_db
-from meu_app_fit.app.models.tracking import Tracking
+from app.models.tracking import Tracking
 
 router = APIRouter(prefix="/tracking", tags=["tracking"])
 

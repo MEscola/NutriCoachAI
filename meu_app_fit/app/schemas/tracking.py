@@ -29,8 +29,8 @@ class TrackingCreate(BaseModel):
 
 # RESPONSE
 class RefeicaoStatusResponse(BaseModel):
-    id: int
-    user_id: UUID
+    #id: int
+    #user_id: UUID
     refeicao_id: int
     status: RefeicaoStatusEnum
 
@@ -40,3 +40,6 @@ class TrackingResponse(BaseModel):
     user_id: UUID
     date: date
     refeicoes: List[RefeicaoStatusResponse]
+
+    class Config:
+        from_attributes = True

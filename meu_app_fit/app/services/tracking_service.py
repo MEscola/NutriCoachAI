@@ -7,6 +7,8 @@ from app.schemas.tracking import TrackingCreate
 
 def salvar_tracking(db: Session, user_id: UUID, data: TrackingCreate):
     #verificar se já existe (mesmo dia)
+    refeicoes_dict = [r.model_dump() for r in data.refeicoes] # Converter os objetos RefeicaoCreate para dicionários
+    
     existing = (
         db.query(Tracking)
         .filter(Tracking.user_id == user_id, Tracking.date == data.date)
@@ -15,7 +17,7 @@ def salvar_tracking(db: Session, user_id: UUID, data: TrackingCreate):
 
     if existing:
         # update seguro
-        existing.refeicoes = data.refeicoes
+        existing.refeicoes = refeicoes_dict
         db.commit()
         db.refresh(existing)
         return existing
@@ -23,7 +25,7 @@ def salvar_tracking(db: Session, user_id: UUID, data: TrackingCreate):
     tracking = Tracking(
         user_id=user_id,
         date=data.date,
-        refeicoes=data.refeicoes
+        refeicoes=refeicoes_dict
     )
 
     db.add(tracking)
