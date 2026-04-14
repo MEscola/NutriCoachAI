@@ -59,7 +59,6 @@ def classify_tracking(refeicoes, treino_realizado: bool) -> str:
     print("REFEIÇOES:", refeicoes)
     print("TREINO REALIZADO:", treino_realizado)
     print("DONE COUNT:", done_count)
-    
 
     return "parcial"
 
@@ -101,7 +100,7 @@ def get_tracking_stats(db: Session, user_id: UUID):
             dias_treino_ok += 1
 
     dias_falhados = total_dias - dias_completos
-    dias_parciais = total_dias - dias_completos - dias_falhados
+    #dias_parciais = total_dias - dias_completos - dias_falhados
 
     def percent(valor):
         return int((valor / total_dias) * 100) if total_dias > 0 else 0
@@ -109,7 +108,7 @@ def get_tracking_stats(db: Session, user_id: UUID):
     return {
         "total_dias": total_dias,
         "dias_completos": dias_completos,
-        "dias_parciais": dias_parciais,
+        #"dias_parciais": dias_parciais,
         "dias_falhados": dias_falhados,
         "aderencia_refeicoes": percent(dias_refeicoes_ok),
         "aderencia_treino": percent(dias_treino_ok),

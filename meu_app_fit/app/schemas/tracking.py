@@ -49,6 +49,7 @@ class TrackingResponse(BaseModel):
 class TrackingStatsResponse(BaseModel):
     total_dias: int
     dias_completos: int
+    #dias_parciais: int
     dias_falhados: int
     aderencia_refeicoes: int
     aderencia_treino: int

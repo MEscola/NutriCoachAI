@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
@@ -33,12 +33,15 @@ def list_tracking(
         Tracking.user_id == current_user.id
     ).all()
 
+# Endpoint para obter o tracking do dia atual
+from datetime import datetime, timezone
+
 @router.get("/today", response_model=TrackingTodayResponse)
 def get_today_tracking(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    today = date.today()
+    today = datetime.now(timezone.utc).date()
 
     tracking = db.query(Tracking).filter(
         Tracking.user_id == current_user.id,
@@ -46,15 +49,22 @@ def get_today_tracking(
     ).first()
 
     if not tracking:
-       return {"status": "no_tracking", "tracking": None}
-    
+        return TrackingTodayResponse(
+            status="no_tracking",
+            tracking=None
+        )
+
     status = classify_tracking(
-        tracking.refeicoes, 
+        tracking.refeicoes,
         tracking.treino_realizado
     )
-    
-    return {"status": status, "tracking": tracking}
 
+    return TrackingTodayResponse(
+        status=status,
+        tracking=tracking,
+    )
+
+# Endpoint para obter as estatísticas de tracking do usuário
 @router.get("/stats", response_model=TrackingStatsResponse)
 def tracking_stats(
     current_user: User = Depends(get_current_user),
