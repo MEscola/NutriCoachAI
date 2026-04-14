@@ -36,3 +36,11 @@ class NotFoundException(AppException):
             code="RESOURCE_NOT_FOUND",
             message=f"{message} not found"
         )
+
+class DatabaseException(AppException):
+    def __init__(self, message: str = "Database Error"):
+        super().__init__(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            code="DATABASE_ERROR",
+            message="Database not ready"
+        )

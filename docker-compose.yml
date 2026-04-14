@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  api:
+    build: 
+      context: ./meu_app_fit
+      dockerfile: Dockerfile
+    container_name: nutricoach_api
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./meu_app_fit/.env
+    depends_on:
+      - db:
+    restart: unless-stopped #!Reinicia o container apenas se ele falhar, evitando reinícios desnecessários, pode ser útil durante o desenvolvimento para evitar loops de reinício
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health/live')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  db:
+    container_name: nutricoach_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: nutricoach
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+
