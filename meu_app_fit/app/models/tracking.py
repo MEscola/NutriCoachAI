@@ -1,6 +1,6 @@
 # models/tracking.py
 
-from sqlalchemy import Column, Date, ForeignKey, DateTime, Index
+from sqlalchemy import Boolean, Column, Date, ForeignKey, DateTime, Index
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -18,7 +18,9 @@ class Tracking(Base):
 
     date = Column(Date, nullable=False)
 
-    refeicoes = Column(JSONB, nullable=False)  # Armazena as refeições do dia em formato JSON   
+    refeicoes = Column(JSONB, nullable=False)  # Armazena as refeições do dia em formato JSON  
+
+    treino_realizado = Column(Boolean, default=False, nullable=False)  # Armazena os treinos realizados em formato JSON, pode ser nulo se o usuário não tiver realizado nenhum treino 
     
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False) # Armazena a data e hora de criação do registro
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())

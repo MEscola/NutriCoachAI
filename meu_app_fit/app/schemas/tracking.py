@@ -43,3 +43,11 @@ class TrackingResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class TrackingStatsResponse(BaseModel):
+    total_dias: int
+    dias_completos: int
+    dias_falhados: int
+    aderencia_refeicoes: int
+    aderencia_treino: int
+    aderencia_geral: int

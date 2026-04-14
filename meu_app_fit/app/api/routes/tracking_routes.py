@@ -1,12 +1,15 @@
+from datetime import date
+
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
-from app.schemas.tracking import TrackingCreate, TrackingResponse
-from app.services.tracking_service import salvar_tracking
+from app.schemas.tracking import TrackingCreate, TrackingResponse, TrackingStatsResponse
+from app.services.tracking_service import get_tracking_stats, salvar_tracking
 from app.api.deps import get_current_user
 from app.models.user import User
 from app.db.session import get_db
 from app.models.tracking import Tracking
+
 
 router = APIRouter(prefix="/tracking", tags=["tracking"])
 
@@ -29,3 +32,33 @@ def list_tracking(
     return db.query(Tracking).filter(
         Tracking.user_id == current_user.id
     ).all()
+
+@router.get("/today", response_model=TrackingResponse)
+def get_today_tracking(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    today = date.today()
+
+    tracking = db.query(Tracking).filter(
+        Tracking.user_id == current_user.id,
+        Tracking.data == today
+    ).first()
+
+    if not tracking:
+        return TrackingResponse(
+            id=None,
+            user_id=current_user.id,
+            data=today, 
+            refeicoes=[],
+            treino_realizado=False
+            )
+    
+    return tracking
+
+@router.get("/stats", response_model=TrackingStatsResponse)
+def tracking_stats(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    return get_tracking_stats(db, current_user.id)
