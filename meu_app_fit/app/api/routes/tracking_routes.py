@@ -3,7 +3,7 @@ from datetime import date
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
-from app.schemas.tracking import TrackingCreate, TrackingResponse, TrackingStatsResponse
+from app.schemas.tracking import TrackingCreate, TrackingResponse, TrackingStatsResponse, TrackingTodayResponse
 from app.services.tracking_service import classify_tracking, get_tracking_stats, salvar_tracking
 from app.api.deps import get_current_user
 from app.models.user import User
@@ -33,7 +33,7 @@ def list_tracking(
         Tracking.user_id == current_user.id
     ).all()
 
-@router.get("/today", response_model=TrackingResponse)
+@router.get("/today", response_model=TrackingTodayResponse)
 def get_today_tracking(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
@@ -53,7 +53,7 @@ def get_today_tracking(
         tracking.treino_realizado
     )
     
-    return {"status".status, "tracking".treino_realizado}
+    return {"status": status, "tracking": tracking}
 
 @router.get("/stats", response_model=TrackingStatsResponse)
 def tracking_stats(
