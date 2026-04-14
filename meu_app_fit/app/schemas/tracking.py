@@ -25,6 +25,7 @@ class TrackingCreate(BaseModel):
         List[RefeicaoStatusCreate],
         Field(min_items=1, max_items=10)
     ]
+    treino_realizado: bool  # Pode ser nulo se o usuário não tiver realizado nenhum treino
 
 
 # RESPONSE
@@ -40,6 +41,7 @@ class TrackingResponse(BaseModel):
     user_id: UUID
     date: date
     refeicoes: List[RefeicaoStatusResponse]
+    treino_realizado: bool  # Pode ser nulo se o usuário não tiver realizado nenhum treino
 
     class Config:
         from_attributes = True

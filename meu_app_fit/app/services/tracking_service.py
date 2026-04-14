@@ -18,21 +18,25 @@ def salvar_tracking(db: Session, user_id: UUID, data: TrackingCreate):
     if existing:
         # update seguro
         existing.refeicoes = refeicoes_dict
+        existing.treino_realizado = data.treino_realizado
         db.commit()
         db.refresh(existing)
         return existing
-
+        
     tracking = Tracking(
         user_id=user_id,
         date=data.date,
-        refeicoes=refeicoes_dict
+        refeicoes=refeicoes_dict,
+        treino_realizado=data.treino_realizado
     )
 
+    
     db.add(tracking)
     db.commit()
     db.refresh(tracking)
 
     return tracking
+    
 
 #função para classificar o tracking
 def classify_tracking(refeicoes, treino_realizado: bool) -> str:
@@ -48,8 +52,14 @@ def classify_tracking(refeicoes, treino_realizado: bool) -> str:
     if done_count == total and treino_realizado:
         return "completo"
 
+
     if done_count == 0 and not treino_realizado:
         return "falhado"
+    
+    print("REFEIÇOES:", refeicoes)
+    print("TREINO REALIZADO:", treino_realizado)
+    print("DONE COUNT:", done_count)
+    
 
     return "parcial"
 
@@ -71,16 +81,27 @@ def get_tracking_stats(db: Session, user_id: UUID):
     for t in trackings:
         status = classify_tracking(t.refeicoes, t.treino_realizado)
 
-    if status == "completo":
-        dias_completos += 1
+        # COMPLETO
+        if status == "completo":
+            dias_completos += 1
 
-    if status != "falhado":
-        dias_refeicoes_ok += 1  # ou refine depois
+        # REFEIÇÕES (isolado corretamente)
+        refeicoes = t.refeicoes or []
+        total = len(refeicoes)
 
-    if t.treino_realizado:
-        dias_treino_ok += 1
+        done_count = sum(
+            1 for r in refeicoes if r.get("status") == "done"
+        )
+
+        if total > 0 and done_count == total:
+            dias_refeicoes_ok += 1
+
+        # TREINO
+        if t.treino_realizado:
+            dias_treino_ok += 1
 
     dias_falhados = total_dias - dias_completos
+    dias_parciais = total_dias - dias_completos - dias_falhados
 
     def percent(valor):
         return int((valor / total_dias) * 100) if total_dias > 0 else 0
@@ -88,6 +109,7 @@ def get_tracking_stats(db: Session, user_id: UUID):
     return {
         "total_dias": total_dias,
         "dias_completos": dias_completos,
+        "dias_parciais": dias_parciais,
         "dias_falhados": dias_falhados,
         "aderencia_refeicoes": percent(dias_refeicoes_ok),
         "aderencia_treino": percent(dias_treino_ok),
