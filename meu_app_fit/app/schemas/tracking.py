@@ -2,7 +2,7 @@ from typing_extensions import Annotated
 from uuid import UUID
 from datetime import date
 from enum import Enum
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -51,3 +51,7 @@ class TrackingStatsResponse(BaseModel):
     aderencia_refeicoes: int
     aderencia_treino: int
     aderencia_geral: int
+
+class TrackingTodayResponse(BaseModel):
+    status: str
+    tracking: Optional[TrackingResponse]
