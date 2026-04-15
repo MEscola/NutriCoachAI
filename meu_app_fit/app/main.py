@@ -8,7 +8,7 @@ from app.api.routes import auth_routes
 #from app.db.migrations import run_migrations
 
 from app.api.routes import ai_routes, tracking_routes, dash_routes
-from meu_app_fit.app.api.routes import health_routes
+from app.api.routes import health_routes
 
 
 app = FastAPI()

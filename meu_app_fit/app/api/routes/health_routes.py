@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from app.db.session import get_db
-from meu_app_fit.app.core.exceptions import DatabaseException
+from app.core.exceptions import DatabaseException
 
 router = APIRouter(prefix="/health", tags=["health"])
 
