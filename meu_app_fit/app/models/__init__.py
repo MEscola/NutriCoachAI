@@ -3,3 +3,4 @@ from app.db.base import Base
 from app.models.user import User
 from app.models.plan import Plan
 from app.models.tracking import Tracking
+from app.models.goal import Goal

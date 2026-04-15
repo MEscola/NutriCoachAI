@@ -9,6 +9,7 @@ from app.api.routes import auth_routes
 
 from app.api.routes import ai_routes, tracking_routes, dash_routes
 from app.api.routes import health_routes
+from app.api.routes import goal_routes
 
 
 app = FastAPI()
@@ -23,6 +24,7 @@ app.include_router(tracking_routes.router)
 app.include_router(dash_routes.router)
 app.include_router(auth_routes.router)
 app.include_router(health_routes.router)
+app.include_router(goal_routes.router)
 
 
 @app.get("/")
