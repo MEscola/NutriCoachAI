@@ -58,3 +58,10 @@ class TrackingStatsResponse(BaseModel):
 class TrackingTodayResponse(BaseModel):
     status: str
     tracking: Optional[TrackingResponse]
+
+class TrackingInsightResponse(BaseModel):
+    score: int
+    streak: int
+    aderencia_geral: int
+    progresso_meta: int
+    mensagem: Optional[str] = Field(default="", max_length=300)

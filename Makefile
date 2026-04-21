@@ -6,11 +6,6 @@ VENV=venv/bin
 
 .PHONY: dev seed dev-seed prod up down logs rebuild migrate revision shell clean 
 
-debug:
-	cd $(BACKEND_DIR) && \
-	echo "Python padrão:" && which python3 && \
-	echo "Python do venv:" && ls -l $(VENV)/python && \
-	echo "Testando SQLAlchemy:" && $(VENV)/python -c "import sqlalchemy; print(sqlalchemy.__version__)"
 # Desenvolvimento local (venv)
 dev:
 	cd $(BACKEND_DIR) && $(VENV)/uvicorn app.main:app --reload
