@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./meu_app_fit/app/models"
+    ]
+}

@@ -5,4 +5,3 @@ from app.models.plan import Plan
 from app.models.tracking import Tracking
 from app.models.goal import Goal
 from app.models.challenge import Challenge
-from app.models.challengeProgress import ChallengeProgress
