@@ -39,13 +39,20 @@ rebuild:
 	docker compose down -v
 	docker compose up --build 
 
-# Rodar migrations
-migrate:
-	cd $(BACKEND_DIR) && $(VENV)/alembic upgrade head
+#MIGRATIONS
 
+# rodar sempre em um banco que ja tem tabelas, mas quer atualizar o schema sem perder dados.
+stamp:
+	cd $(BACKEND_DIR) && $(VENV)/alembic stamp head
+
+# Gerar nova migration (autogenerate)
 revision:
 	cd $(BACKEND_DIR) && $(VENV)/alembic revision --autogenerate -m "$(msg)"
 	# Exemplo: make revision msg="Add new field to User model"
+
+# Rodar migrações(salva dados)
+upgrade:
+	cd $(BACKEND_DIR) && $(VENV)/alembic upgrade head
 
 # Entrar no container (debug)
 shell:
