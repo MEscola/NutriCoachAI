@@ -1,61 +1,96 @@
-## NutriCoachAI
+# NutriCoachAI
 
-NutriCoachAI é um assistente inteligente de performance que utiliza Inteligência Artificial para gerar estratégias personalizadas de treino e nutrição.
+AI-powered performance assistant that generates personalized nutrition and workout strategies, combined with user progress tracking and gamified challenges.
 
-A aplicação foi desenvolvida com foco em atletas que buscam praticidade no dia a dia, oferecendo recomendações adaptadas ao perfil e objetivo do usuário.
-
-> ⚠️ Projeto em desenvolvimento: algumas funcionalidades ainda estão sendo aprimoradas.
+> ⚠️ Projeto em evolução — arquitetura e funcionalidades sendo continuamente aprimoradas.
 
 ---
 
-## Problema Resolvido
+## Problema
 
-Muitos praticantes de atividades físicas enfrentam dificuldades para ajustar alimentação e treino de forma personalizada.
+Planejar treino e alimentação de forma personalizada é complexo e difícil de manter ao longo do tempo.
 
-O NutriCoachAI resolve esse problema fornecendo sugestões rápidas e inteligentes baseadas em dados do usuário, como horário de treino, objetivo e modalidade.
+Além disso, falta consistência e acompanhamento — fatores essenciais para evolução.
 
----
-
-## Tecnologias Utilizadas
-
-### Front-end (Client)
-- Next.js 15+ (App Router)
-- TypeScript
-- Tailwind CSS 4
-- shadcn/ui (Radix UI)
-- Sonner (notificações)
-- Lucide React (ícones)
-
-### Back-end (Server)
-- Python 3.10+
-- FastAPI
-- Pydantic (validação de dados)
-- Slowapi (rate limiting)
-
-### Inteligência Artificial
-- Google Gemini API (gemini-1.5-flash)
+O NutriCoachAI resolve isso combinando:
+- recomendações inteligentes com IA
+- acompanhamento de progresso
+- sistema de desafios gamificado
 
 ---
 
 ## Funcionalidades
 
-- Geração de planos personalizados com IA
-- Identificação da intenção do usuário (plano completo ou dúvida específica)
-- Suporte a múltiplas modalidades:
-  - CrossFit
-  - Musculação
-  - Corrida
-- Sugestões de pré e pós-treino baseadas no horário
-- Persistência de dados com localStorage
-- Compartilhamento via WhatsApp
+### Inteligência Artificial
+- Geração de estratégias personalizadas de treino e nutrição
+- Interpretação de intenção do usuário
+- Sugestões de pré e pós-treino
 
-> Algumas funcionalidades estão em desenvolvimento e podem sofrer alterações.
+### Sistema de Desafios
+- Criação e gerenciamento de challenges (ex: flexões)
+- Controle de status:
+  - ativo
+  - concluído
+  - cancelado
+- Progressão ao longo do tempo
+
+### Acompanhamento de Progresso
+- Registro de evolução do usuário
+- Base para métricas e análise futura
+
+### Gamificação
+- Engajamento por meio de desafios
+- Incentivo à consistência
+
+### Autenticação
+- Sistema de autenticação implementado
+- Base para controle de usuários
 
 ---
 
-## Estrutura de Dados
+## Arquitetura
 
-O backend utiliza Pydantic para validação dos dados:
+Arquitetura baseada em separação de responsabilidades (client-server):
+
+- **Frontend** → interface e experiência do usuário  
+- **Backend** → regras de negócio, autenticação e processamento  
+- **Banco de Dados** → persistência com Supabase  
+- **IA (Gemini)** → geração de respostas inteligentes  
+
+### Fluxo principal
+
+1. Usuário interage via frontend  
+2. Backend valida e processa dados  
+3. Dados persistidos no banco (quando necessário)  
+4. IA gera recomendações personalizadas  
+5. Backend retorna resposta estruturada  
+6. Frontend exibe e atualiza progresso  
+
+---
+
+## Tecnologias
+
+### Frontend
+- Next.js 15+
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+
+### Backend
+- Python
+- FastAPI
+- Pydantic
+- Slowapi (rate limiting)
+
+### Banco de Dados
+- Supabase (PostgreSQL)
+
+### Inteligência Artificial
+- Google Gemini API
+
+---
+
+## Estrutura de Dados (exemplo)
 
 ```python
 class DadosUsuario(BaseModel):
@@ -67,9 +102,9 @@ class DadosUsuario(BaseModel):
     tipo_treino: str
     mensagem: Optional[str] = ""
 ```
-## Exemplo de Requisição
 
-```
+## Exemplo de Uso da API
+
 {
   "horario_treino": "07:00",
   "idade": 30,
@@ -79,47 +114,53 @@ class DadosUsuario(BaseModel):
   "tipo_treino": "CrossFit",
   "mensagem": "O que comer antes do treino?"
 }
-```
-## Intalação e Configuração
-
-```bash
+---
+## Instalação Backend
+´´´
 cd server
 python -m venv venv
 venv\Scripts\activate
 pip install fastapi uvicorn google-generativeai python-dotenv slowapi pydantic
+´´´
+# Execute
 
-```
-Crie um arquivo .env
-
-CHAVE_API=SUA_CHAVE_GEMINI_AQUI
-
-Para rodar o Back-end
-
-```bash
+´´´
 uvicorn app.main:app --reload
- ```
-
-Front-end
-
+´´´
+## Frontend
+´´´
 cd front-app-fit
 npm install
 npm run dev
-
+´´´
 ## Segurança
 
-Rate limiting por IP com Slowapi
 Validação de dados com Pydantic
+Rate limiting por IP
+Autenticação de usuários
+Middleware de tratamento de erros e logging
 
 ## Uso de Inteligência Artificial
 
-Este projeto utiliza IA (Google Gemini) para geração de respostas personalizadas.
+O projeto utiliza a API do Google Gemini para geração de recomendações personalizadas.
 
-Durante o desenvolvimento, ferramentas de IA também foram utilizadas como apoio para:
+Durante o desenvolvimento, ferramentas de IA foram utilizadas como apoio para:
 
--estruturação de lógica
--otimização de código
--melhoria de UX
+Estruturação de lógica e arquitetura
+Otimização de código
+Revisão de boas práticas
+Apoio em decisões técnicas
 
-Autor
+O uso de IA atua como acelerador de produtividade, não substituindo decisões de engenharia.
+
+## Próximos Passos
+
+Dashboard completo de métricas
+Melhorias de UX/UI
+Evolução da gamificação
+Deploy e CI/CD
+Escalabilidade da infraestrutura
+
+👩‍💻Autora
 
 Márcia Escolástico
