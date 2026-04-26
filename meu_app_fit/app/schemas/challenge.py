@@ -9,11 +9,12 @@ from app.schemas.progress import ProgressResponse
 
 
 class UnidadeEnum(str, Enum):
-    KM = "km"
-    MINUTOS = "minutos"
-    CALORIAS = "calorias"
     REPS = "reps"
-    DIAS = "dias"
+    KM = "km"
+    METROS = "metros"
+    MINUTOS = "minutos"
+    SEGUNDOS = "segundos"
+    CALORIAS = "calorias"
 
 class ChallengeCreate(BaseModel):
     tipo: str

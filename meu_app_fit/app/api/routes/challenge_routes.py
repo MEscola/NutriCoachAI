@@ -18,6 +18,7 @@ from app.schemas.progress import (
 
 from app.services import challenge_service
 from app.core.exceptions import BadRequestException, NotFoundException
+from challenge import ChallengeStatus
 
 router = APIRouter(prefix="/challenges", tags=["challenges"])
 
@@ -28,10 +29,12 @@ def create_challenge(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    
     try:
         return challenge_service.create_challenge(db, current_user.id, data)
+                       
     except Exception as e:
-        raise BadRequestException(str(e))
+        raise BadRequestException()
 
 # Registrar progresso em desafio
 @router.post("/{challenge_id}/progress", response_model=ProgressResponse)
@@ -65,12 +68,16 @@ def get_challenge_insight(
 ):
     challenge = challenge_service.get_challenge_by_id(db, challenge_id, current_user.id)
 
-    progresses = challenge_service.get_challenge_progresses(db, challenge_id)
-    return challenge_service.calculate_challenge_insight(challenge, progresses)
+    progress = challenge_service.get_challenge_progress(db, challenge_id)
+
+    if challenge.status != ChallengeStatus.ATIVO:
+        raise BadRequestException("Challenge is not active")
+    
+    return challenge_service.calculate_challenge_insight(challenge, progress)
 
 
-@router.get("/{challenge_id}/progresses", response_model=list[ProgressResponse])
-def get_challenge_progresses(
+@router.get("/{challenge_id}/progress", response_model=list[ProgressResponse])
+def get_challenge_progress(
     challenge_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -89,3 +96,14 @@ def get_challenge_progresses(
         "progress": progress,
         "insight": insight
     }
+
+@router.patch("/{challenge_id}/cancel", response_model=ChallengeResponse) #router.patch para indicar que é uma atualização parcial
+def cancel_challenge(
+    challenge_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        return challenge_service.cancel_challenge(db, challenge_id, current_user.id)
+    except Exception as e:
+        raise BadRequestException(str(e))

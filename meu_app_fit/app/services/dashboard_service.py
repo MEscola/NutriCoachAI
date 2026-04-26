@@ -4,7 +4,7 @@ from app.services.tracking_service import get_tracking_stats
 from app.services.goal_service import calculate_goal_progress
 from app.services.challenge_service import (
     get_current_challenge,
-    get_challenge_progresses,
+    get_challenge_progress,
     calculate_challenge_insight
 )
 from app.models.tracking import Tracking
@@ -43,8 +43,8 @@ def calculate_user_score(db: Session, user_id: UUID):
     challenge_message = None
 
     if challenge:
-        progresses = get_challenge_progresses(db, challenge.id)
-        insight = calculate_challenge_insight(challenge, progresses)
+        progress = get_challenge_progress(db, challenge.id)
+        insight = calculate_challenge_insight(challenge, progress)
 
         challenge_score = insight.get("progresso", 0)
         challenge_progress = insight.get("progresso", 0)

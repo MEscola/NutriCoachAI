@@ -2,7 +2,7 @@ from uuid import UUID
 from datetime import date, timedelta
 from sqlalchemy.orm import Session
 
-from app.models.challenge import Challenge
+from app.models.challenge import Challenge, ChallengeStatus
 from app.models.challenge_progress import ChallengeProgress
 
 
@@ -10,14 +10,16 @@ def create_challenge(db: Session, user_id: UUID, data):
     #impedir múltiplos desafios ativos
     existing = db.query(Challenge).filter(
         Challenge.user_id == user_id,
-        Challenge.data_fim >= date.today()
+        Challenge.status == ChallengeStatus.ATIVO
     ).first()
 
     if existing:
         raise Exception("User already has an active challenge")
+   
 
     challenge = Challenge(
         user_id=user_id,
+        status=ChallengeStatus.ATIVO,
         **data.dict()
     )
 
@@ -64,17 +66,16 @@ def add_progress(db: Session, challenge_id: UUID, user_id: UUID, data):
 
 # Buscar desafio ativo do usuário
 def get_current_challenge(db: Session, user_id: UUID):
-    today = date.today()
 
     return db.query(Challenge).filter(
         Challenge.user_id == user_id,
-        Challenge.data_inicio <= today,
-        Challenge.data_fim >= today
+        Challenge.status == ChallengeStatus.ATIVO
     ).first()
 
 
+
 # Gerar insights do desafio
-def calculate_challenge_insight(challenge, progresses):
+def calculate_challenge_insight(challenge, progress):
     today = date.today()
 
     # total de dias do desafio
@@ -85,19 +86,19 @@ def calculate_challenge_insight(challenge, progresses):
     dias_passados = max(0, min(dias_passados, total_days))
 
     #total realizado
-    total_realizado = sum(p.realizado for p in progresses)
+    total_realizado = sum(p.realizado for p in progress)
 
     #progresso %
     progresso = int((total_realizado / challenge.meta_total) * 100) if challenge.meta_total > 0 else 0
     progresso = min(progresso, 100)
 
     #streak (dias seguidos com progresso)
-    progresses_sorted = sorted(progresses, key=lambda x: x.date, reverse=True)
+    progress_sorted = sorted(progress, key=lambda x: x.date, reverse=True)
 
     streak = 0
     current_day = today
 
-    for p in progresses_sorted:
+    for p in progress_sorted:
         if p.date == current_day and p.realizado > 0:
             streak += 1
             current_day = current_day - timedelta(days=1)
@@ -149,3 +150,22 @@ def get_challenge_progress(db: Session, challenge_id: UUID):
     return db.query(ChallengeProgress).filter(
         ChallengeProgress.challenge_id == challenge_id
     ).order_by(ChallengeProgress.date.asc()).all() 
+
+
+def cancel_challenge(db: Session, challenge_id: UUID, user_id: UUID):
+    challenge = db.query(Challenge).filter(
+        Challenge.id == challenge_id,
+        Challenge.user_id == user_id
+    ).first()
+
+    if not challenge:
+        raise Exception("Challenge not found")
+    
+    if challenge.status != ChallengeStatus.ATIVO:
+        raise Exception("Only active challenges can be canceled")
+
+    challenge.status = ChallengeStatus.CANCELADO
+    db.commit()
+    db.refresh(challenge)
+
+    return challenge

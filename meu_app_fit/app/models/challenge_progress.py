@@ -9,7 +9,7 @@ class ChallengeProgress(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
-    challenge_id = Column(UUID(as_uuid=True), ForeignKey("challenges.id"), nullable=False)
+    challenge_id = Column(UUID(as_uuid=True), ForeignKey("challenges.id", ondelete="CASCADE"), nullable=False)
 
     date = Column(Date, nullable=False)
 

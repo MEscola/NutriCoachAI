@@ -18,3 +18,5 @@ def dashboard(
     db: Session = Depends(get_db),
 ):
     return calculate_user_score(db, current_user.id)
+
+
