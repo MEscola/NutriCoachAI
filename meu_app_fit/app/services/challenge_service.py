@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.models.challenge import Challenge, ChallengeStatus
 from app.models.challenge_progress import ChallengeProgress
+from app.core.exceptions import BadRequestException, NotFoundException, NotFoundException
 
 
 def create_challenge(db: Session, user_id: UUID, data):
@@ -37,11 +38,11 @@ def add_progress(db: Session, challenge_id: UUID, user_id: UUID, data):
     ).first()
 
     if not challenge:
-        raise Exception("Challenge not found")
+        raise NotFoundException("Challenge not found")
 
     #validar período
     if data.date < challenge.data_inicio or data.date > challenge.data_fim:
-        raise Exception("Date outside challenge period")
+        raise BadRequestException("Date outside challenge period")
 
     #evitar duplicidade
     existing = db.query(ChallengeProgress).filter(
@@ -50,7 +51,7 @@ def add_progress(db: Session, challenge_id: UUID, user_id: UUID, data):
     ).first()
 
     if existing:
-        raise Exception("Progress already exists for this date")
+        raise BadRequestException("Progress for this date already exists")
 
     progress = ChallengeProgress(
         challenge_id=challenge_id,
@@ -116,6 +117,7 @@ def calculate_challenge_insight(challenge, progress):
 
     precisa_por_dia = int(faltam_total / dias_restantes)
 
+
     #mensagem inteligente
     if progresso == 100:
         mensagem = "Meta concluída! Excelente trabalho"
@@ -128,6 +130,9 @@ def calculate_challenge_insight(challenge, progress):
 
     else:
         mensagem = "Bom progresso, continue!"
+
+    if challenge.status != ChallengeStatus.ATIVO:
+        raise BadRequestException("Challenge is not active")
 
     return {
         "progresso": progresso,
@@ -159,10 +164,10 @@ def cancel_challenge(db: Session, challenge_id: UUID, user_id: UUID):
     ).first()
 
     if not challenge:
-        raise Exception("Challenge not found")
+        raise NotFoundException("Challenge not found")
     
     if challenge.status != ChallengeStatus.ATIVO:
-        raise Exception("Only active challenges can be canceled")
+        raise BadRequestException("Only active challenges can be canceled")
 
     challenge.status = ChallengeStatus.CANCELADO
     db.commit()

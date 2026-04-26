@@ -15,25 +15,12 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 def register(data: UserCreate, db: Session = Depends(get_db)):
     token = register_user(db, data)
 
-    if not token:
-        # resposta genérica (anti-enumeração)
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid request"
-        )
-
     return token
 
 
 @router.post("/login", response_model=Token)
 def login(data: UserLogin, db: Session = Depends(get_db)):
     token = login_user(db, data)
-
-    if not token:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid credentials"
-        )
 
     return token
 

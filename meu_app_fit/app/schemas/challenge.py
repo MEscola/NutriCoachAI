@@ -35,8 +35,15 @@ class ChallengeResponse(BaseModel):
     class Config:
         from_attributes = True
 
+class ChallengeInsightResponse(BaseModel):
+    progresso: int
+    streak: int
+    atrasado: bool
+    faltam_total: int
+    precisa_por_dia: int
+    mensagem: str
 
 class ChallengeProgressFullResponse(BaseModel):
     challenge: ChallengeResponse
     progress: List[ProgressResponse]
-    insight: Dict
+    insight: ChallengeInsightResponse

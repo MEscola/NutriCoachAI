@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.schemas.auth import UserCreate, UserLogin
 from app.repositories.user_repository import get_user_by_email, create_user
 from app.core.security import create_refresh_token, hash_password, verify_password, create_access_token
+from app.core.exceptions import UnauthorizedException
 
 
 def register_user(db: Session, data: UserCreate):
@@ -13,10 +14,8 @@ def register_user(db: Session, data: UserCreate):
         # NÃO revelar se já existe
         #return None    #!Important - decidir se queremos revelar ou não a existência do email. Anti-enumeração é mais seguro, mas pode ser menos amigável.
        
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
-            detail="Invalid credentials"  # mensagem genérica para evitar enumeração
-        )
+        raise UnauthorizedException("user already exists") #!Decidir se queremos usar uma exceção personalizada ou apenas retornar um erro genérico. Para segurança, é melhor não revelar detalhes.
+        
 
     hashed = hash_password(data.password)
     user = create_user(db, data.email, hashed)
@@ -32,16 +31,14 @@ def register_user(db: Session, data: UserCreate):
 
    
 
-    # mensagem genérica (anti-enumeração)
+    
 def login_user(db: Session, data: UserLogin):
 
     user = get_user_by_email(db, data.email)
 
     if not user or not verify_password(data.password, user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid credentials"
-        )
+        raise UnauthorizedException("Invalid email or password")
+
 
     token = create_access_token(str(user.id))
     refresh_token = create_refresh_token(str(user.id))
