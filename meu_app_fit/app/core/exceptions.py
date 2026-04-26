@@ -18,7 +18,7 @@ class UnauthorizedException(AppException):
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
             code="AUTH_INVALID_CREDENTIALS",
-            message="could not validate credentials"
+            message=message
         )
 
 class BadRequestException(AppException):
