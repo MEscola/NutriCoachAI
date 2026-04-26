@@ -11,12 +11,21 @@ from app.api.routes import ai_routes, tracking_routes, dash_routes
 from app.api.routes import health_routes
 from app.api.routes import goal_routes
 from app.api.routes import challenge_routes
+from app.core.exception_handlers import app_exception_handler, generic_exception_handler
+from app.core.middleware_log import LoggingMiddleware
+from app.core.exceptions import AppException
 
 
 app = FastAPI()
 
+#middleware
+app.add_middleware(LoggingMiddleware)
+
+# Exception handlers
+app.add_exception_handler(AppException, app_exception_handler)
+app.add_exception_handler(Exception, generic_exception_handler)
+
 # Setup global
-#setup_logging()
 setup_cors(app)
 
 # Rotas
