@@ -1,0 +1,48 @@
+name: CI - NutriCoachAI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Setup Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build da imagem
+        run: docker compose build
+
+      - name: Subir container
+        run: docker compose up -d
+
+      - name: Aguardar API subir
+        run: |
+          echo "Esperando API..."
+          for i in {1..10}; do
+            if curl -s http://localhost:8000/health/live; then
+              echo "API está no ar!"
+              break
+            fi
+            sleep 3
+          done
+
+      - name: Testar health LIVE
+        run: curl --fail http://localhost:8000/health/live
+
+      - name: Testar health READY
+        run: curl --fail http://localhost:8000/health/ready
+
+      - name: Logs (debug se falhar)
+        if: failure()
+        run: docker compose logs
+
+      - name: Derrubar container
+        if: always()
+        run: docker compose down
