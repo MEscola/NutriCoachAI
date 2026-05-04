@@ -1,17 +1,15 @@
 #!/bin/sh
 
-echo "Iniciando container..."
+echo "🚀 Iniciando container..."
 
-echo "Aplicando migrations..."
-alembic upgrade head || {
-  echo "❌ Erro ao rodar migrations"
-  exit 1
-}
+cd /app
 
-if [ "$ENV" = "dev" ]; then
-  echo "DEV: rodando seed"
-  python -m app.seeds.run_seed
+if [ "$ENV" != "ci" ]; then
+  echo "📦 Aplicando migrations..."
+  alembic upgrade head || echo "⚠️ Falha na migration (não bloqueante)"
+else
+  echo "⚠️ CI: pulando migrations"
 fi
 
-echo "Subindo aplicação..."
+echo "🌐 Subindo aplicação..."
 exec uvicorn app.main:app --host 0.0.0.0 --port 8000

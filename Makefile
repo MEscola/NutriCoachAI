@@ -34,6 +34,11 @@ down:
 logs:
 	docker compose logs -f
 
+# Entrar no container (debug)
+exec:
+	docker exec -it nutricoach_api bash
+
+
 # Rebuild completo (zera tudo)
 rebuild:
 	docker compose down -v
@@ -54,9 +59,6 @@ revision:
 upgrade:
 	cd $(BACKEND_DIR) && $(VENV)/alembic upgrade head
 
-# Entrar no container (debug)
-shell:
-	docker exec -it nutricoach_api bash
 
 # Limpar imagens e containers (cuidado!)
 clean:

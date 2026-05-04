@@ -9,7 +9,7 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - ./meu_app_fit/.env
+      - ./meu_app_fit/.env.dev
     
     restart: unless-stopped #!Reinicia o container apenas se ele falhar, evitando reinícios desnecessários, pode ser útil durante o desenvolvimento para evitar loops de reinício
     healthcheck:
