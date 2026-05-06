@@ -13,7 +13,7 @@ export function ProgressCard({ title, value }: Props) {
         {title}
       </span>
 
-      <span className="text-xl font-semibold text-primary">
+      <span className="text-xl font-semibold text-[var(--primary)]">
         {value}%
       </span>
 

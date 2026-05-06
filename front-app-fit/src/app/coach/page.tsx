@@ -65,17 +65,17 @@ export default function Home() {
       mensagem: "",
     },
   });
- 
+
   // ===== PROTEÇÃO DE ROTA =====
 
   const router = useRouter();
   useEffect(() => {
-  const token = localStorage.getItem("access_token");
-  
-  if (!token) {
-    router.replace("/login");
-  }
-}, []);
+    const token = localStorage.getItem("access_token");
+
+    if (!token) {
+      router.replace("/login");
+    }
+  }, []);
 
   // ===== LOAD PERFIL =====
   useEffect(() => {
@@ -119,13 +119,13 @@ export default function Home() {
         body: JSON.stringify({ ...data, tipo }),
       });
 
-    //DEBUG
-    if (!res.ok) {
-      const error = await res.json();
-      console.error("Erro no Backend", error);
-      toast.error("Resposta inesperada do servidor.");
-      return;
-    }
+      //DEBUG
+      if (!res.ok) {
+        const error = await res.json();
+        console.error("Erro no Backend", error);
+        toast.error("Resposta inesperada do servidor.");
+        return;
+      }
 
       const result = await res.json();
 
@@ -134,22 +134,22 @@ export default function Home() {
         const updated = [...prev];
 
         if (result.tipo === "duvida") {
-  updated[updated.length - 1] = {
-    role: "assistant",
-    content: result.data?.resposta || "Não consegui gerar resposta 😅",
-  };
+          updated[updated.length - 1] = {
+            role: "assistant",
+            content: result.data?.resposta || "Não consegui gerar resposta 😅",
+          };
 
-} else if (result.tipo === "plano") {
-  updated[updated.length - 1] = {
-    role: "assistant",
-    plano: result.data,
-  };
-} else {
-  updated[updated.length - 1] = {
-    role: "assistant",
-    content: "Resposta inesperada do servidor",
-  };
-}
+        } else if (result.tipo === "plano") {
+          updated[updated.length - 1] = {
+            role: "assistant",
+            plano: result.data,
+          };
+        } else {
+          updated[updated.length - 1] = {
+            role: "assistant",
+            content: "Resposta inesperada do servidor",
+          };
+        }
 
         return updated;
       });
@@ -181,17 +181,17 @@ export default function Home() {
   };
 
   let perfil: any = {};
-try {
-  perfil = JSON.parse(localStorage.getItem("perfil") || "{}");
-} catch {
-  perfil = {};
-}
+  try {
+    perfil = JSON.parse(localStorage.getItem("perfil") || "{}");
+  } catch {
+    perfil = {};
+  }
 
   const gerarPlano = () => {
-  handleSubmit((data) => {
-    onSubmit({ ...data, mensagem: "" });
-  })();
-};
+    handleSubmit((data) => {
+      onSubmit({ ...data, mensagem: "" });
+    })();
+  };
 
   return (
     <main className="min-h-screen bg-black text-zinc-100 flex justify-center p-4 dark">
@@ -233,7 +233,7 @@ try {
 
                 <button
                   onClick={() => setPerfilPreenchido(false)}
-                  className="text-[10px] px-3 py-1 bg-zinc-800 rounded-full text-primary hover:bg-zinc-700"
+                  className="text-[10px] px-3 py-1 bg-zinc-800 rounded-full text-[var(--primary)] hover:bg-zinc-700"
                 >
                   Editar perfil
                 </button>
@@ -288,7 +288,7 @@ try {
                 <div className="relative">
                   <DSTextarea
                     label={""} placeholder="Pergunte algo ou deixe vazio para gerar um plano..."
-                    {...register("mensagem")}                  />
+                    {...register("mensagem")} />
 
                   <button
                     type="submit"
@@ -338,8 +338,8 @@ try {
             >
               <div
                 className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm whitespace-pre-wrap ${msg.role === "user"
-                    ? "bg-primary text-black rounded-br-none"
-                    : "bg-zinc-800 text-white rounded-bl-none"
+                  ? "bg-primary text-black rounded-br-none"
+                  : "bg-zinc-800 text-white rounded-bl-none"
                   }`}
               >
                 {msg.content && <span>{msg.content}</span>}

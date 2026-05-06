@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberEmail, setRememberEmail] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
   const {
     register,
@@ -26,14 +27,23 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  // recuperar email salvo
+  // AUTH CHECK + REMEMBER EMAIL (unificado)
   useEffect(() => {
+    const token = localStorage.getItem("access_token");
+
+    if (token) {
+      router.replace("/dashboard");
+      return;
+    }
+
     const savedEmail = localStorage.getItem("remember_email");
     if (savedEmail) {
       setValue("email", savedEmail);
       setRememberEmail(true);
     }
-  }, [setValue]);
+
+    setCheckingAuth(false);
+  }, [router, setValue]);
 
   const onSubmit = async (data: LoginFormData) => {
     setApiError(null);
@@ -43,7 +53,6 @@ export default function LoginPage() {
       const res = await loginRequest(data.email, data.password);
       saveTokens(res);
 
-      // lembrar email
       if (rememberEmail) {
         localStorage.setItem("remember_email", data.email);
       } else {
@@ -57,24 +66,22 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
-// redirecionar se já estiver logado
-  useEffect(() => {
-  const token = localStorage.getItem("access_token");
 
-  if (token) {
-    router.replace("/dashboard");
+  if (checkingAuth) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <p className="text-muted-foreground">Carregando...</p>
+      </div>
+    );
   }
-}, [router]);
 
   return (
     <div className="h-screen flex items-center justify-center bg-background">
       <Card className="w-full max-w-md">
         <CardContent>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-4"
-          >
-            <h1 className="text-xl font-semibold text-primary">
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+
+            <h1 className="text-xl font-semibold text-[var(--primary)] p-5 text-center">
               Entrar no NutriCoach
             </h1>
 
@@ -83,11 +90,10 @@ export default function LoginPage() {
               <input
                 placeholder="Email"
                 {...register("email")}
-                className={`bg-input border rounded-lg px-3 py-2 text-sm outline-none 
-                  ${
-                    errors.email
-                      ? "border-red-500"
-                      : "border-border focus:ring-1 focus:ring-primary"
+                className={`rounded-lg px-3 py-2 text-sm outline-none
+                  ${errors.email
+                    ? "border border-red-500"
+                    : "bg-[var(--card)] border border-[var(--border)] focus:ring-1 focus:ring-[var(--primary)]"
                   }`}
               />
               {errors.email && (
@@ -103,15 +109,13 @@ export default function LoginPage() {
                 type={showPassword ? "text" : "password"}
                 placeholder="Senha"
                 {...register("password")}
-                className={`bg-input border rounded-lg px-3 py-2 text-sm outline-none pr-16
-                  ${
-                    errors.password
-                      ? "border-red-500"
-                      : "border-border focus:ring-1 focus:ring-primary"
+                className={`rounded-lg px-3 py-2 text-sm outline-none pr-16
+                  ${errors.password
+                    ? "border border-red-500"
+                    : "bg-[var(--card)] border border-[var(--border)] focus:ring-1 focus:ring-[var(--primary)]"
                   }`}
               />
 
-              {/*mostrar/ocultar */}
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
@@ -137,19 +141,20 @@ export default function LoginPage() {
               Lembrar email
             </label>
 
-            {/* ERRO API */}
+            {/* ERROR */}
             {apiError && (
               <p className="text-red-500 text-sm">{apiError}</p>
             )}
 
-            {/* BOTÃO SUBMIT */}
+            {/* BUTTON */}
             <button
               type="submit"
               disabled={loading}
-              className="bg-primary text-black rounded-lg py-2 font-medium hover:opacity-90 transition disabled:opacity-50"
+              className="bg-[var(--primary)] text-black rounded-lg py-2 font-medium hover:opacity-90 transition disabled:opacity-50"
             >
               {loading ? "Entrando..." : "Entrar"}
             </button>
+
           </form>
         </CardContent>
       </Card>

@@ -16,7 +16,7 @@ export default function RenderPlano({ data }: any) {
 
   return (
     <div className="space-y-4">
-      
+
       {/* ===== ALIMENTAÇÃO ===== */}
       <div className="space-y-2">
         <div className="flex items-center gap-2 text-[10px] uppercase text-zinc-400 font-bold tracking-widest">
@@ -35,12 +35,12 @@ export default function RenderPlano({ data }: any) {
 
       {/* ===== DICA EXTRA ===== */}
       <div className="bg-primary/10 border border-primary/30 rounded-2xl p-4 space-y-2">
-        <div className="flex items-center gap-2 text-[10px] uppercase text-primary font-bold tracking-widest">
+        <div className="flex items-center gap-2 text-[10px] uppercase text-[var(--primary)] font-bold tracking-widest">
           <Lightbulb size={12} /> Dica do Coach
         </div>
 
         <p className="text-sm text-zinc-200 leading-relaxed">
-          {data.dica_extra} 
+          {data.dica_extra}
         </p>
       </div>
     </div>

@@ -1,5 +1,3 @@
-import { error } from "console";
-
 const API_URL = "http://localhost:8000";
 
 type LoginResponse = {
@@ -18,7 +16,7 @@ export async function loginRequest(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      username: email, 
+      email, 
       password,
     }),
   });
@@ -27,11 +25,12 @@ export async function loginRequest(
 
 
   if (!res.ok) {
-  throw new Error(
+  const message =
     typeof data.detail === "string"
       ? data.detail
-      : JSON.stringify(data.detail)
-  );
+      : data.detail?.[0]?.msg || "Erro ao fazer login";
+
+  throw new Error(message);
 }
 
   return data;

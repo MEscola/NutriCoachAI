@@ -9,10 +9,10 @@ export async function apiFetch(
   const res = await fetch(`${API_URL}${endpoint}`, {
     ...options,
     headers: {
-      ...(options.body && { "Content-Type": "application/json" }),
-      ...(token && { Authorization: `Bearer ${token}` }),
-      ...(options.headers || {}),
-    },
+  "Content-Type": "application/json",
+  ...(token && { Authorization: `Bearer ${token}` }),
+  ...(options.headers || {}),
+},
   });
 
   let data;
@@ -23,12 +23,21 @@ export async function apiFetch(
   }
 
   if (!res.ok) {
-    const error: any = new Error(data?.detail || "Erro na API");
-    error.status = res.status;
-    error.data = data;
+  let message = "Erro na API";
 
-    throw error;
+  if (typeof data?.detail === "string") {
+    message = data.detail;
+  } else if (data?.detail) {
+    message = JSON.stringify(data.detail);
+  } else if (data) {
+    message = JSON.stringify(data);
   }
 
-  return data;
-}
+  const error: any = new Error(message);
+  error.status = res.status;
+  error.data = data;
+
+  console.error("API ERROR:", data); // 🔥 importante
+
+  throw error;
+}}

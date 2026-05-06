@@ -12,10 +12,10 @@ export default function Home() {
     router.replace(token ? "/dashboard" : "/login");
   }, [router]);
 
-   return (
+  return (
     <div className="h-screen flex items-center justify-center bg-background">
-      <div className="bg-card border border-border p-6 rounded-xl">
-        <h1 className="text-primary text-2xl">
+      <div className="bg-[var(--card)] border border-[var(--border)] border bg-[var(--card)] border border-[var(--border)]p-6 rounded-xl">
+        <h1 className="text-[var(--primary)] text-2xl">
           NutriCoachAI
         </h1>
       </div>
