@@ -1,16 +1,48 @@
-export async function loginRequest(email: string, password: string) {
-  const res = await fetch("http://localhost:8000/auth/login", {
+import { error } from "console";
+
+const API_URL = "http://localhost:8000";
+
+type LoginResponse = {
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+};
+
+export async function loginRequest(
+  email: string,
+  password: string
+): Promise<LoginResponse> {
+  const res = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      username: email, 
+      password,
+    }),
   });
 
-  if (!res.ok) throw new Error("Erro ao logar");
+  const data = await res.json();
 
-  return res.json();
+
+  if (!res.ok) {
+  throw new Error(
+    typeof data.detail === "string"
+      ? data.detail
+      : JSON.stringify(data.detail)
+  );
 }
 
-export function saveTokens(data: any) {
+  return data;
+}
+
+export function saveTokens(data: LoginResponse) {
   localStorage.setItem("access_token", data.access_token);
   localStorage.setItem("refresh_token", data.refresh_token);
+}
+
+export function clearTokens() {
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token");
 }

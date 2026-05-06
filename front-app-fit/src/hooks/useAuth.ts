@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export function useAuth() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -11,6 +14,12 @@ export function useAuth() {
 
     if (!token) {
       router.replace("/login");
+    } else {
+      setIsAuthenticated(true);
     }
+
+    setIsChecking(false);
   }, [router]);
+
+  return { isAuthenticated, isChecking }; // isChecking para evitar flash de conteúdo protegido
 }
