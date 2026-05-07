@@ -6,6 +6,7 @@ import { MetricCard } from "@/components/ui/metricCard";
 import { useAuth } from "@/hooks/useAuth";
 import { ProgressBar } from "@/components/ui/progressBar";
 import { getDashboardData } from "@/services/dashboard";
+import { welcomeMessage } from "@/services/time";
 
 
 type DashboardState = {
@@ -81,17 +82,17 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="p-6 md:p-8 flex flex-col gap-6 md:gap-8">
+    <div className="p-6 md:p-3 flex flex-col gap-6 md:gap-8">
 
       {/*HEADER USUÁRIO */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 md:p-6 flex justify-between items-center">
         <div className="flex flex-col">
-          <span className="text-sm text-muted-foreground">
-            Bem-vindo
+          <span className="text-md text-[var(--foreground)]">
+            {welcomeMessage()}, <span className="text-md font-semibold text-[var(--primary)]">{user.nome}  👋🏾</span>
           </span>
 
-          <span className="text-lg font-semibold text-[var(--foreground)]">
-            {user.nome}
+          <span className="text-sm text-[var(--muted-foreground)]">
+            Aqui está seu resumo de hoje
           </span>
         </div>
 
@@ -103,9 +104,7 @@ export default function Dashboard() {
 
       {/*MÉTRICAS */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-        <MetricCard title="Score" value={data.stats?.score ?? 0} />
-        <MetricCard title="Streak" value={data.stats?.streak ?? 0} />
-
+        
         {/*PESO */}
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 flex flex-col justify-center">
           <span className="text-sm text-muted-foreground">
@@ -115,6 +114,9 @@ export default function Dashboard() {
             {user.peso} kg
           </span>
         </div>
+
+        <MetricCard title="Score" value={data.stats?.score ?? 0} />
+        <MetricCard title="Streak" value={data.stats?.streak ?? 0} />
       </div>
 
       {/*PROGRESSO */}
