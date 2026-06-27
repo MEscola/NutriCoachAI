@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8000";
+import { apiFetch } from "./api";
 
 type LoginResponse = {
   access_token: string;
@@ -10,28 +10,10 @@ export async function loginRequest(
   email: string,
   password: string
 ): Promise<LoginResponse> {
-  const res = await fetch(`${API_URL}/auth/login`, {
+  const data = await apiFetch("/auth/login", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email, 
-      password,
-    }),
+    body: JSON.stringify({ email, password }),
   });
-
-  const data = await res.json();
-
-
-  if (!res.ok) {
-  const message =
-    typeof data.detail === "string"
-      ? data.detail
-      : data.detail?.[0]?.msg || "Erro ao fazer login";
-
-  throw new Error(message);
-}
 
   return data;
 }

@@ -19,7 +19,7 @@ class TipoTreino(str, Enum):
 class Objetivo(str, Enum):
     HIPERTROFIA = "hipertrofia"
     EMAGRECIMENTO = "emagrecimento"
-    PERFORMACE = "performance"
+    PERFORMANCE = "performance"
 
 
 #SCHEMA PARA DADOS DO USUÁRIO
@@ -31,5 +31,18 @@ class DadosUsuario(BaseModel):
     sexo: Sexo
     objetivo: Objetivo
     tipo_treino: TipoTreino
-    mensagem: Optional[str] = Field(default="", max_length=300)
+    mensagem: Optional[str] = Field(default=None, max_length=300)
     tipo: TipoRequest
+
+#    
+class UserMeResponse(BaseModel):
+    id: int
+    nome: str
+    idade: int
+    peso: float
+    sexo: str
+    objetivo: str
+    tipo_treino: str
+
+    class Config:
+        from_attributes = True

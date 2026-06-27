@@ -2,12 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
 import { MetricCard } from "@/components/ui/metricCard";
-import { useAuth } from "@/hooks/useAuth";
 import { ProgressBar } from "@/components/ui/progressBar";
+
+import { useAuth } from "@/hooks/useAuth";
+import { useUser } from "@/hooks/useUser";
+
 import { getDashboardData } from "@/services/dashboard";
 import { welcomeMessage } from "@/services/time";
-
 
 type DashboardState = {
   plano: any;
@@ -23,14 +26,17 @@ export default function Dashboard() {
 
   const router = useRouter();
   const { isAuthenticated, isChecking } = useAuth();
+  const { user, loading: userLoading } = useUser();
 
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || !user) return;
+
+    let isMounted = true;
 
     async function load() {
       try {
-        const result = await getDashboardData();
-        setData(result);
+        const result = await getDashboardData(user);
+        if (isMounted) setData(result);
       } catch (err: any) {
         if (err.status === 401) {
           localStorage.removeItem("access_token");
@@ -39,25 +45,19 @@ export default function Dashboard() {
           console.error(err);
         }
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     }
 
     load();
-  }, [isAuthenticated, router]);
 
-  // 🔄 estados
-  if (isChecking) {
-    return (
-      <div className="p-6 md:p-8 text-muted-foreground">
-        Verificando sessão...
-      </div>
-    );
-  }
+    return () => {
+      isMounted = false;
+    };
+  }, [isAuthenticated, user, router]);
 
-  if (!isAuthenticated) return null;
-
-  if (loading) {
+  // 🔄 loading states
+  if (isChecking || userLoading || loading || !user || !data) {
     return (
       <div className="p-6 md:p-8 text-muted-foreground">
         Carregando dashboard...
@@ -65,30 +65,17 @@ export default function Dashboard() {
     );
   }
 
-  if (!data) {
-    return (
-      <div className="p-6 md:p-8 text-red-500">
-        Erro ao carregar dados
-      </div>
-    );
-  }
-
-  // user  da API
-  const user = {
-    nome: data.plano?.user?.nome || "Atleta",
-    peso: data.plano?.user?.peso || 0,
-    objetivo: data.plano?.user?.objetivo || "",
-    tipoTreino: data.plano?.user?.tipo_treino || "",
-  };
-
   return (
     <div className="p-6 md:p-3 flex flex-col gap-6 md:gap-8">
 
-      {/*HEADER USUÁRIO */}
+      {/* HEADER */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 md:p-6 flex justify-between items-center">
         <div className="flex flex-col">
           <span className="text-md text-[var(--foreground)]">
-            {welcomeMessage()}, <span className="text-md font-semibold text-[var(--primary)]">{user.nome}  👋🏾</span>
+            {welcomeMessage()}, {" "}
+            <span className="text-md font-semibold text-[var(--primary)]">
+              {user.nome} 👋🏾
+            </span>
           </span>
 
           <span className="text-sm text-[var(--muted-foreground)]">
@@ -98,14 +85,14 @@ export default function Dashboard() {
 
         <div className="text-sm text-muted-foreground text-right">
           <div>{user.objetivo}</div>
-          <div>{user.tipoTreino}</div>
+          <div>{user.tipo_treino}</div>
         </div>
       </div>
 
-      {/*MÉTRICAS */}
+      {/* MÉTRICAS */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-        
-        {/*PESO */}
+
+        {/* PESO */}
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 flex flex-col justify-center">
           <span className="text-sm text-muted-foreground">
             Peso atual
@@ -119,29 +106,18 @@ export default function Dashboard() {
         <MetricCard title="Streak" value={data.stats?.streak ?? 0} />
       </div>
 
-      {/*PROGRESSO */}
+      {/* PROGRESSO */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 md:p-6 flex flex-col gap-4">
         <h2 className="text-sm text-muted-foreground">
           Progresso geral
         </h2>
 
-        <ProgressBar
-          label="Aderência"
-          value={data.stats?.aderencia ?? 0}
-        />
-
-        <ProgressBar
-          label="Meta"
-          value={data.goals?.progresso ?? 0}
-        />
-
-        <ProgressBar
-          label="Challenge"
-          value={data.challenge?.progresso ?? 0}
-        />
+        <ProgressBar label="Aderência" value={data.stats?.aderencia ?? 0} />
+        <ProgressBar label="Meta" value={data.goals?.progresso ?? 0} />
+        <ProgressBar label="Challenge" value={data.challenge?.progresso ?? 0} />
       </div>
 
-      {/*COACH AI */}
+      {/* COACH AI */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 md:p-6 flex flex-col gap-4">
         <h2 className="text-sm text-muted-foreground">
           Coach AI
@@ -151,7 +127,6 @@ export default function Dashboard() {
           {data.plano?.mensagem || "Seu plano será exibido aqui"}
         </p>
 
-        {/* INPUT FUTURO */}
         <div className="flex gap-2 mt-2">
           <input
             placeholder="Pergunte algo..."
