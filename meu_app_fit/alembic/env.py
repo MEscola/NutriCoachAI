@@ -1,13 +1,20 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
 from alembic import context
+from sqlalchemy import create_engine
+
+
+from app.core.settings import settings
+from app.models import Base  # Importe o Base do seu módulo de modelos
+
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+
+# Defina a URL do banco de dados a partir do settings
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)  
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -19,7 +26,6 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 
-from app.models import Base  # Importe o Base do seu módulo de modelos
 
 target_metadata = Base.metadata # Certifique-se de que o Base esteja importado corretamente
 
@@ -60,13 +66,13 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    from sqlalchemy import create_engine
+    
 
     url = config.get_main_option("sqlalchemy.url")
 
     
     connectable = create_engine(
-        url,
+       url,
         connect_args={"sslmode": "require"},
     )
 

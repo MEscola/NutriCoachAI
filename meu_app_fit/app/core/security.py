@@ -7,9 +7,8 @@ from jose import jwt, JWTError
 from passlib.context import CryptContext
 from typing import Optional
 
-from app.core.settings import Settings
+from app.core.settings import settings
 from app.core.exceptions import UnauthorizedException
-settings = Settings()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
