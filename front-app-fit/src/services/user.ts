@@ -11,5 +11,5 @@ export type UserMe = {
 };
 
 export async function getMe(): Promise<UserMe> {
-  return apiFetch("/auth/me");
+  return apiFetch("/profile/me");
 }

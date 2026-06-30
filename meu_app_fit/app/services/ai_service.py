@@ -3,6 +3,8 @@ import os
 import google.generativeai as genai
 from dotenv import load_dotenv
 
+from user import User
+
 
 load_dotenv()
 
@@ -26,9 +28,9 @@ def salvar_plano(plano):
 
 
 # FLUXO DÚVIDA
-def gerar_resposta_duvida(dados):
+def gerar_resposta_duvida(user: User, mensagem: str):
     prompt = f"""
-Você é um coach de {dados.tipo_treino} e nutricionista.
+Você é um coach de {user.tipo_treino} e nutricionista.
 
 Responda APENAS a pergunta de forma direta.
 
@@ -37,8 +39,16 @@ Formato:
   "resposta": ""
 }}
 
+Usuário:
+
+Objetivo:
+{user.objetivo}
+
+Peso:
+{user.peso}
+
 Pergunta:
-{dados.mensagem}
+{mensagem}
 
 Regras:
 - Máximo 3 frases
@@ -60,9 +70,9 @@ Regras:
 
 
 # FLUXO PLANO
-def gerar_plano(user_id, dados): 
+def gerar_plano(user: User): 
     prompt = f"""
-Você é um coach de {dados.tipo_treino} e nutricionista.
+Você é um coach de {user.tipo_treino} e nutricionista.
 
 Formato JSON:
 
@@ -79,12 +89,12 @@ Formato JSON:
 }}
 
 Dados:
-- Idade: {dados.idade}
-- Peso: {dados.peso}
-- Sexo: {dados.sexo}
-- Objetivo: {dados.objetivo}
-- Tipo: {dados.tipo_treino}
-- Horário: {dados.horario_treino}
+Idade: {user.idade}
+Peso: {user.peso}
+Sexo: {user.sexo}
+Objetivo: {user.objetivo}
+Treino: {user.tipo_treino}
+Horário: {user.horario_treino}
 
 Regras:
 - Simples e prático

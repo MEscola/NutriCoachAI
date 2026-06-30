@@ -34,7 +34,18 @@ class DadosUsuario(BaseModel):
     mensagem: Optional[str] = Field(default=None, max_length=300)
     tipo: TipoRequest
 
-#    
+
+#Entrada da requisição para atualizar os dados do usuário        
+class UserUpdate(BaseModel):
+    idade: int
+    peso: float
+    sexo: Sexo
+    objetivo: Objetivo
+    tipo_treino: TipoTreino
+    horario_treino: time
+
+
+#resposta   
 class UserMeResponse(BaseModel):
     id: int
     nome: str

@@ -8,6 +8,7 @@ from app.core.security import create_access_token, create_refresh_token, decode_
 from app.api.deps import get_current_user
 from app.core.exceptions import UnauthorizedException
 from app.models.user import User
+from app.schemas.user import UserMeResponse
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -25,17 +26,6 @@ def login(data: UserLogin, db: Session = Depends(get_db)):
 
     return token
 
-@router.get("/me", response_model=UserMeResponse)
-def get_me(current_user: User = Depends(get_current_user)):
-    return {
-        "id": current_user.id,
-        "nome": current_user.nome,
-        "idade": current_user.idade,
-        "peso": current_user.peso,
-        "sexo": current_user.sexo,
-        "objetivo": current_user.objetivo,
-        "tipo_treino": current_user.tipo_treino,
-    }
 
 
 @router.post("/refresh", response_model=Token)
@@ -66,4 +56,5 @@ def refresh(data: RefreshRequest, db: Session = Depends(get_db)):
         "refresh_token": new_refresh_token,
         "token_type": "bearer",
     }
-        
+    
+    
