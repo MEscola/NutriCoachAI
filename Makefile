@@ -6,6 +6,7 @@ VENV=venv/bin
 
 .PHONY: dev seed dev-seed prod up down logs rebuild migrate revision shell clean 
 
+
 # Desenvolvimento local (venv)
 dev:
 	cd $(BACKEND_DIR) && $(VENV)/uvicorn app.main:app --reload

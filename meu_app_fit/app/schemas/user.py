@@ -25,9 +25,12 @@ class Objetivo(str, Enum):
 #SCHEMA PARA DADOS DO USUÁRIO
 
 class DadosUsuario(BaseModel):
+    avatar_url: Optional[str] = Field(default=None)
+    nome: str = Field(..., max_length=255)
     horario_treino: time # Formato HH:MM
     idade: int = Field(..., gt=0)
     peso: float = Field(..., gt=0)
+    altura: Optional[float] = Field(default=None, gt=0)
     sexo: Sexo
     objetivo: Objetivo
     tipo_treino: TipoTreino
@@ -39,6 +42,7 @@ class DadosUsuario(BaseModel):
 class UserUpdate(BaseModel):
     idade: int
     peso: float
+    altura: float
     sexo: Sexo
     objetivo: Objetivo
     tipo_treino: TipoTreino
@@ -51,6 +55,7 @@ class UserMeResponse(BaseModel):
     nome: str
     idade: int
     peso: float
+    altura:float
     sexo: str
     objetivo: str
     tipo_treino: str

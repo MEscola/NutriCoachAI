@@ -47,6 +47,9 @@ Objetivo:
 Peso:
 {user.peso}
 
+altura:
+{user.altura}
+
 Pergunta:
 {mensagem}
 
