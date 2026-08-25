@@ -2,6 +2,7 @@ from datetime import time
 from enum import Enum
 from pydantic import BaseModel, Field
 from typing import Optional
+from uuid import UUID
 
 class TipoRequest(str, Enum):
     PLANO = "plano"
@@ -40,9 +41,9 @@ class DadosUsuario(BaseModel):
 
 #Entrada da requisição para atualizar os dados do usuário        
 class UserUpdate(BaseModel):
-    idade: int
-    peso: float
-    altura: float
+    idade: int = Field(..., gt=0)
+    peso: float = Field(..., gt=0)
+    altura: float = Field(..., gt=0)
     sexo: Sexo
     objetivo: Objetivo
     tipo_treino: TipoTreino
@@ -51,14 +52,14 @@ class UserUpdate(BaseModel):
 
 #resposta   
 class UserMeResponse(BaseModel):
-    id: int
-    nome: str
-    idade: int
-    peso: float
-    altura:float
-    sexo: str
-    objetivo: str
-    tipo_treino: str
+    id: UUID
+    nome: Optional[str] = None
+    idade: Optional[int] = None
+    peso: Optional[float] = None
+    altura: Optional[float] = None
+    sexo: Optional[str] = None
+    objetivo: Optional[str] = None
+    tipo_treino: Optional[str] = None
 
     class Config:
         from_attributes = True

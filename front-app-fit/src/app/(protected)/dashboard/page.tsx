@@ -25,27 +25,44 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   const router = useRouter();
+
   const { isAuthenticated, isChecking } = useAuth();
   const { user, loading: userLoading } = useUser();
 
   useEffect(() => {
-    if (!isAuthenticated || !user) return;
+    // Ainda verificando autenticação
+    if (isChecking) return;
+
+    // Usuário não autenticado
+    if (!isAuthenticated) {
+      setLoading(false);
+      return;
+    }
+
+    // Autenticado, mas ainda carregando o perfil
+    if (userLoading || !user) return;
 
     let isMounted = true;
 
     async function load() {
       try {
         const result = await getDashboardData(user);
-        if (isMounted) setData(result);
+
+        if (isMounted) {
+          setData(result);
+        }
       } catch (err: any) {
         if (err.status === 401) {
           localStorage.removeItem("access_token");
           router.replace("/login");
-        } else {
-          console.error(err);
+          return;
         }
+
+        console.error("Erro ao carregar dashboard:", err);
       } finally {
-        if (isMounted) setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     }
 
@@ -54,10 +71,22 @@ export default function Dashboard() {
     return () => {
       isMounted = false;
     };
-  }, [isAuthenticated, user, router]);
+  }, [
+    isAuthenticated,
+    isChecking,
+    user,
+    userLoading,
+    router,
+  ]);
 
-  // 🔄 loading states
-  if (isChecking || userLoading || loading || !user || !data) {
+  // Estados de carregamento
+  if (
+    isChecking ||
+    userLoading ||
+    loading ||
+    !user ||
+    !data
+  ) {
     return (
       <div className="p-6 md:p-8 text-muted-foreground">
         Carregando dashboard...
@@ -72,7 +101,7 @@ export default function Dashboard() {
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 md:p-6 flex justify-between items-center">
         <div className="flex flex-col">
           <span className="text-md text-[var(--foreground)]">
-            {welcomeMessage()}, {" "}
+            {welcomeMessage()},{" "}
             <span className="text-md font-semibold text-[var(--primary)]">
               {user.nome} 👋🏾
             </span>
@@ -97,13 +126,21 @@ export default function Dashboard() {
           <span className="text-sm text-muted-foreground">
             Peso atual
           </span>
+
           <span className="text-2xl font-semibold text-[var(--primary)]">
             {user.peso} kg
           </span>
         </div>
 
-        <MetricCard title="Score" value={data.stats?.score ?? 0} />
-        <MetricCard title="Streak" value={data.stats?.streak ?? 0} />
+        <MetricCard
+          title="Score"
+          value={data.stats?.score ?? 0}
+        />
+
+        <MetricCard
+          title="Streak"
+          value={data.stats?.streak ?? 0}
+        />
       </div>
 
       {/* PROGRESSO */}
@@ -112,9 +149,20 @@ export default function Dashboard() {
           Progresso geral
         </h2>
 
-        <ProgressBar label="Aderência" value={data.stats?.aderencia ?? 0} />
-        <ProgressBar label="Meta" value={data.goals?.progresso ?? 0} />
-        <ProgressBar label="Challenge" value={data.challenge?.progresso ?? 0} />
+        <ProgressBar
+          label="Aderência"
+          value={data.stats?.aderencia ?? 0}
+        />
+
+        <ProgressBar
+          label="Meta"
+          value={data.goals?.progresso ?? 0}
+        />
+
+        <ProgressBar
+          label="Challenge"
+          value={data.challenge?.progresso ?? 0}
+        />
       </div>
 
       {/* COACH AI */}
@@ -142,3 +190,4 @@ export default function Dashboard() {
     </div>
   );
 }
+

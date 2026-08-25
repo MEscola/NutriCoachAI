@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Float, String, DateTime, Boolean, Time
+from sqlalchemy import Column, Float, String, DateTime, Boolean, Time, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -17,14 +17,14 @@ class User(Base):
     
     #dados do usuário
     avatar_url = Column(String(255), nullable=True)
-    nome = Column(String(255), nullable=False)
-    idade = Column(String(3), nullable=False)
-    peso = Column(Float(10), nullable=False)
-    altura = Column(Float(10), nullable=True)
-    sexo = Column(String(20), nullable=False)
-    objetivo = Column(String(50), nullable=False)
-    tipo_treino = Column(String(50), nullable=False)
-    horario_treino = Column(Time, nullable=False)  # Formato HH
+    nome = Column(String(255), nullable=True)
+    idade = Column(Integer, nullable=True)
+    peso = Column(Float, nullable=True)
+    altura = Column(Float, nullable=True)
+    sexo = Column(String(20), nullable=True)
+    objetivo = Column(String(50), nullable=True)
+    tipo_treino = Column(String(50), nullable=True)
+    horario_treino = Column(Time, nullable=True) # Formato HH
 
     #controle
     is_active = Column(Boolean, default=True, nullable=False)

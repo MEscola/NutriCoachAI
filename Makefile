@@ -1,5 +1,5 @@
 BACKEND_DIR := meu_app_fit
-VENV=venv/bin
+VENV=.venv/bin
 #não usar o activate pq ele serve para alterar o ambiente do terminal, e aqui queremos apenas usar os binários do venv
 # cada linha do Makefile é executada em um shell separado, então o source não mantém o ambiente ativo para a próxima linha
 
