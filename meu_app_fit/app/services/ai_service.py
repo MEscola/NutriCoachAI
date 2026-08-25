@@ -3,7 +3,7 @@ import os
 import google.generativeai as genai
 from dotenv import load_dotenv
 
-from user import User
+from app.models.user import User
 
 
 load_dotenv()

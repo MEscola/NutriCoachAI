@@ -20,12 +20,12 @@ dev-seed:
 	$(MAKE) dev
 
 # Produção (Docker) foreground
-prod:
+up:
 	docker compose up --build
 
-# Subir em background
-up:
-	docker compose up --build -d
+# Subir em background- não mostram logs
+up2:
+	docker compose up --build -d 
 
 # Parar containers
 down:

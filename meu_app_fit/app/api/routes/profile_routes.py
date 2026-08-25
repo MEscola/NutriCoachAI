@@ -2,15 +2,15 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
-from meu_app_fit.app.api.deps import get_current_user
-from meu_app_fit.app.db.session import get_db
-from meu_app_fit.app.schemas.user import UserMeResponse, UserUpdate
-from user import User
+from app.api.deps import get_current_user
+from app.schemas.user import UserMeResponse, UserUpdate
+from app.models.user import User
+from app.services.profile_service import update_profile
 
 
 router = APIRouter(prefix="/profile", tags=["profile"])
 
-@router.get(response_model=UserMeResponse)
+@router.get("/me", response_model=UserMeResponse)
 def get_me(current_user: User = Depends(get_current_user)):
     return current_user
 
