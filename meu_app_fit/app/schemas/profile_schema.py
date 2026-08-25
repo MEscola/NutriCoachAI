@@ -1,0 +1,1 @@
+#TODO fazer a separação de schemas para cada tipo de usuário, e criar um schema base para os campos em comum.

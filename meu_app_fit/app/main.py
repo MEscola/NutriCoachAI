@@ -11,6 +11,7 @@ from app.api.routes import ai_routes, tracking_routes, dash_routes
 from app.api.routes import health_routes
 from app.api.routes import goal_routes
 from app.api.routes import challenge_routes
+from app.api.routes import profile_routes
 from app.core.exception_handlers import app_exception_handler, generic_exception_handler
 from app.core.middleware_log import LoggingMiddleware
 from app.core.exceptions import AppException
@@ -36,6 +37,7 @@ app.include_router(auth_routes.router)
 app.include_router(health_routes.router)
 app.include_router(goal_routes.router)
 app.include_router(challenge_routes.router)
+app.include_router(profile_routes.router)
 
 
 @app.get("/")
