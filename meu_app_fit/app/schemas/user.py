@@ -53,13 +53,15 @@ class UserUpdate(BaseModel):
 #resposta   
 class UserMeResponse(BaseModel):
     id: UUID
-    nome: Optional[str] = None
-    idade: Optional[int] = None
-    peso: Optional[float] = None
-    altura: Optional[float] = None
-    sexo: Optional[str] = None
-    objetivo: Optional[str] = None
-    tipo_treino: Optional[str] = None
+    avatar_url: str | None = None
+    nome: str | None = None
+    idade: int | None = None
+    peso: float | None = None
+    altura: float | None = None
+    sexo: str | None = None
+    objetivo: str | None = None
+    tipo_treino: str | None = None
+    horario_treino: time | None = None
 
     class Config:
         from_attributes = True

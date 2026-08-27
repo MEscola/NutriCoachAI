@@ -188,6 +188,7 @@ router.replace("/dashboard");
           {/* HORÁRIO */}
           <input
             type="time"
+            placeholder = "Horário de treino"
             value={form.horario_treino}
             onChange={(e) =>
               setForm({

@@ -11,6 +11,7 @@ def update_profile(
 ):
     current_user.idade = data.idade
     current_user.peso = data.peso
+    current_user.altura = data.altura
     current_user.sexo = data.sexo
     current_user.objetivo = data.objetivo
     current_user.tipo_treino = data.tipo_treino
