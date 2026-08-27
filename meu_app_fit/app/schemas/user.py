@@ -41,6 +41,7 @@ class DadosUsuario(BaseModel):
 
 #Entrada da requisição para atualizar os dados do usuário        
 class UserUpdate(BaseModel):
+    nome: str = Field(..., max_length=255)
     idade: int = Field(..., gt=0)
     peso: float = Field(..., gt=0)
     altura: float = Field(..., gt=0)

@@ -27,41 +27,45 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  // AUTH CHECK + REMEMBER EMAIL (unificado)
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-
-    if (token) {
-      router.replace("/profile");
-      return;
-    }
-
     const savedEmail = localStorage.getItem("remember_email");
+
     if (savedEmail) {
       setValue("email", savedEmail);
       setRememberEmail(true);
     }
 
     setCheckingAuth(false);
-  }, [router, setValue]);
+  }, [setValue]);
 
   const onSubmit = async (data: LoginFormData) => {
     setApiError(null);
     setLoading(true);
 
     try {
-      const res = await loginRequest(data.email, data.password);
+      const res = await loginRequest(
+        data.email,
+        data.password
+      );
+
       saveTokens(res);
 
       if (rememberEmail) {
-        localStorage.setItem("remember_email", data.email);
+        localStorage.setItem(
+          "remember_email",
+          data.email
+        );
       } else {
-        localStorage.removeItem("remember_email");
+        localStorage.removeItem(
+          "remember_email"
+        );
       }
 
-      router.push("/profile");
+      router.replace("/dashboard");
     } catch (err: any) {
-      setApiError(err.message || "Erro ao fazer login");
+      setApiError(
+        err.message || "Erro ao fazer login"
+      );
     } finally {
       setLoading(false);
     }
@@ -70,7 +74,9 @@ export default function LoginPage() {
   if (checkingAuth) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <p className="text-muted-foreground">Carregando...</p>
+        <p className="text-muted-foreground">
+          Carregando...
+        </p>
       </div>
     );
   }
@@ -79,8 +85,10 @@ export default function LoginPage() {
     <div className="h-screen flex items-center justify-center bg-background">
       <Card className="w-full max-w-md">
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-4"
+          >
             <h1 className="text-xl font-semibold text-[var(--primary)] p-5 text-center">
               Entrar no NutriCoach
             </h1>
@@ -88,14 +96,17 @@ export default function LoginPage() {
             {/* EMAIL */}
             <div className="flex flex-col gap-1">
               <input
+                type="email"
                 placeholder="Email"
                 {...register("email")}
                 className={`rounded-lg px-3 py-2 text-sm outline-none
-                  ${errors.email
-                    ? "border border-red-500"
-                    : "bg-[var(--card)] border border-[var(--border)] focus:ring-1 focus:ring-[var(--primary)]"
+                  ${
+                    errors.email
+                      ? "border border-red-500"
+                      : "bg-[var(--card)] border border-[var(--border)] focus:ring-1 focus:ring-[var(--primary)]"
                   }`}
               />
+
               {errors.email && (
                 <span className="text-red-500 text-xs">
                   {errors.email.message}
@@ -106,22 +117,31 @@ export default function LoginPage() {
             {/* PASSWORD */}
             <div className="flex flex-col gap-1 relative">
               <input
-                type={showPassword ? "text" : "password"}
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
                 placeholder="Senha"
                 {...register("password")}
                 className={`rounded-lg px-3 py-2 text-sm outline-none pr-16
-                  ${errors.password
-                    ? "border border-red-500"
-                    : "bg-[var(--card)] border border-[var(--border)] focus:ring-1 focus:ring-[var(--primary)]"
+                  ${
+                    errors.password
+                      ? "border border-red-500"
+                      : "bg-[var(--card)] border border-[var(--border)] focus:ring-1 focus:ring-[var(--primary)]"
                   }`}
               />
 
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() =>
+                  setShowPassword(!showPassword)
+                }
                 className="absolute right-3 top-2 text-muted-foreground text-xs"
               >
-                {showPassword ? "Ocultar" : "Mostrar"}
+                {showPassword
+                  ? "Ocultar"
+                  : "Mostrar"}
               </button>
 
               {errors.password && (
@@ -131,19 +151,26 @@ export default function LoginPage() {
               )}
             </div>
 
-            {/* REMEMBER */}
+            {/* REMEMBER EMAIL */}
             <label className="flex items-center gap-2 text-sm text-muted-foreground">
               <input
                 type="checkbox"
                 checked={rememberEmail}
-                onChange={(e) => setRememberEmail(e.target.checked)}
+                onChange={(e) =>
+                  setRememberEmail(
+                    e.target.checked
+                  )
+                }
               />
+
               Lembrar email
             </label>
 
             {/* ERROR */}
             {apiError && (
-              <p className="text-red-500 text-sm">{apiError}</p>
+              <p className="text-red-500 text-sm">
+                {apiError}
+              </p>
             )}
 
             {/* BUTTON */}
@@ -152,9 +179,10 @@ export default function LoginPage() {
               disabled={loading}
               className="bg-[var(--primary)] text-black rounded-lg py-2 font-medium hover:opacity-90 transition disabled:opacity-50"
             >
-              {loading ? "Entrando..." : "Entrar"}
+              {loading
+                ? "Entrando..."
+                : "Entrar"}
             </button>
-
           </form>
         </CardContent>
       </Card>

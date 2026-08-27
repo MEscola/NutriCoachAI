@@ -9,6 +9,7 @@ def update_profile(
     current_user: User,
     data: UserUpdate,
 ):
+    current_user.nome = data.nome
     current_user.idade = data.idade
     current_user.peso = data.peso
     current_user.altura = data.altura

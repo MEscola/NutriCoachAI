@@ -17,6 +17,7 @@ export default function ProfilePage() {
   const [error, setError] = useState<string | null>(null);
 
   const [form, setForm] = useState({
+    nome: user?.nome ?? "",
     idade: "",
     peso: "",
     altura: "",
@@ -30,6 +31,7 @@ export default function ProfilePage() {
     if (!user) return;
 
     setForm({
+      nome: user.nome ?? "",
       idade: user.idade?.toString() ?? "",
       peso: user.peso?.toString() ?? "",
       altura: user.altura?.toString() ?? "",
@@ -50,6 +52,7 @@ export default function ProfilePage() {
       const result = await apiFetch("/profile/me", {
   method: "PUT",
   body: JSON.stringify({
+    nome: form.nome,
     idade: Number(form.idade),
     peso: Number(form.peso),
     altura: Number(form.altura),
@@ -102,6 +105,18 @@ router.replace("/dashboard");
           onSubmit={handleSubmit}
           className="flex flex-col gap-4"
         >
+
+          {/* NOME */}
+          <input
+            type="text"
+            placeholder="Nome"
+            value={form.nome}
+            onChange={(e) =>
+              setForm({ ...form, nome: e.target.value })
+            }
+            className="rounded-lg px-3 py-2 bg-[var(--card)] border border-[var(--border)]"
+            required
+          />
 
           {/* IDADE */}
           <input

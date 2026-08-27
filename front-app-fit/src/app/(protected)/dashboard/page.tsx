@@ -38,6 +38,10 @@ export default function Dashboard() {
   useEffect(() => {
     if (isChecking || userLoading) return;
 
+  console.log("AUTH:", isAuthenticated);
+  console.log("USER:", user);
+  console.log("PROFILE COMPLETE:", profileComplete);
+
     if (!isAuthenticated) return;
 
     if (!user) return;
