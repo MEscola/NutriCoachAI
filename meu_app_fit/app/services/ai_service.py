@@ -1,5 +1,6 @@
 import json
 import os
+
 import google.generativeai as genai
 from dotenv import load_dotenv
 
@@ -11,35 +12,26 @@ load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-3-flash-preview')
 
-
-def salvar_plano(plano):
-    # Aqui você pode implementar a lógica para salvar o plano no banco de dados
-    # Por exemplo, usando SQLAlchemy:
-    # from app.db import SessionLocal
-    # from app.models import Plano
-    #
-    # db = SessionLocal()
-    # novo_plano = Plano(**plano)
-    # db.add(novo_plano)
-    # db.commit()
-    pass
+model = genai.GenerativeModel("gemini-3-flash-preview")
 
 
 # FLUXO DÚVIDA
+
 def gerar_resposta_duvida(user: User, mensagem: str):
+
     prompt = f"""
 Você é um coach de {user.tipo_treino} e nutricionista.
 
-Responda APENAS a pergunta de forma direta.
+Responda APENAS à pergunta de forma direta.
 
-Formato:
+Formato JSON:
+
 {{
   "resposta": ""
 }}
 
-Usuário:
+Dados do usuário:
 
 Objetivo:
 {user.objetivo}
@@ -47,7 +39,7 @@ Objetivo:
 Peso:
 {user.peso}
 
-altura:
+Altura:
 {user.altura}
 
 Pergunta:
@@ -59,23 +51,28 @@ Regras:
 """
 
     response = model.generate_content(prompt)
+
     text = response.text.strip()
 
     inicio = text.find("{")
     fim = text.rfind("}") + 1
+
+    if inicio == -1 or fim == 0:
+        raise ValueError("IA não retornou JSON válido")
+
     json_str = text[inicio:fim]
 
-    try:
-        data = json.loads(json_str)
-        return {"tipo": "duvida", "data": data}
-    except:
-        return {"erro": "Falha ao gerar resposta"}
+    return json.loads(json_str)
 
 
 # FLUXO PLANO
-def gerar_plano(user: User): 
+
+def gerar_plano(user: User):
+
     prompt = f"""
 Você é um coach de {user.tipo_treino} e nutricionista.
+
+Gere um plano alimentar simples e prático.
 
 Formato JSON:
 
@@ -91,7 +88,8 @@ Formato JSON:
   "dica_extra": ""
 }}
 
-Dados:
+Dados do usuário:
+
 Idade: {user.idade}
 Peso: {user.peso}
 Sexo: {user.sexo}
@@ -100,30 +98,21 @@ Treino: {user.tipo_treino}
 Horário: {user.horario_treino}
 
 Regras:
+
 - Simples e prático
 - Sem texto fora do JSON
 """
 
     response = model.generate_content(prompt)
+
     text = response.text.strip()
 
     inicio = text.find("{")
     fim = text.rfind("}") + 1
+
+    if inicio == -1 or fim == 0:
+        raise ValueError("IA não retornou JSON válido")
+
     json_str = text[inicio:fim]
 
-    try:
-        data = json.loads(json_str)
-
-        plano = {
-            "user_id": str(user_id), # Substitua pelo ID real do usuário
-            "date": "2026-03-27",
-            "alimentacao": data["alimentacao"],
-            "dica_extra": data["dica_extra"]
-        }
-
-        salvar_plano(plano)
-
-        return {"tipo": "plano", "data": plano}
-
-    except:
-        return {"erro": "Falha ao gerar plano"}
+    return json.loads(json_str)

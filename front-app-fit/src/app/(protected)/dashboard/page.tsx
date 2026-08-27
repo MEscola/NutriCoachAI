@@ -34,19 +34,31 @@ export default function Dashboard() {
     profileComplete,
   } = useUser();
 
-  // Verifica autenticação e completude do perfil
+  // =========================================================
+  // 1. VERIFICA AUTENTICAÇÃO E COMPLETUDE DO PERFIL
+  // =========================================================
+
   useEffect(() => {
-    if (isChecking || userLoading) return;
+    if (isChecking || userLoading) {
+      return;
+    }
 
-  console.log("AUTH:", isAuthenticated);
-  console.log("USER:", user);
-  console.log("PROFILE COMPLETE:", profileComplete);
+    console.log("========== DASHBOARD AUTH ==========");
+    console.log("AUTH:", isAuthenticated);
+    console.log("USER:", user);
+    console.log("PROFILE COMPLETE:", profileComplete);
+    console.log("====================================");
 
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {
+      return;
+    }
 
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     if (!profileComplete) {
+      console.log("Perfil incompleto → /profile");
       router.replace("/profile");
     }
   }, [
@@ -58,35 +70,58 @@ export default function Dashboard() {
     router,
   ]);
 
-  // Carrega os dados do dashboard
+  // =========================================================
+  // 2. CARREGA OS DADOS DO DASHBOARD
+  // =========================================================
+
   useEffect(() => {
-    if (isChecking) return;
+    if (isChecking || userLoading) {
+      return;
+    }
 
     if (!isAuthenticated) {
       setLoading(false);
       return;
     }
 
-    if (userLoading || !user || !profileComplete) return;
+    if (!user) {
+      return;
+    }
+
+    if (!profileComplete) {
+      return;
+    }
 
     let isMounted = true;
 
     async function load() {
       try {
+        console.log("========== DASHBOARD DATA ==========");
+        console.log("6. Tudo OK → chamando getDashboardData");
+        console.log("7. EXECUTANDO getDashboardData");
+
         const result = await getDashboardData(user);
+
+        console.log("8. DASHBOARD RECEBIDO:", result);
 
         if (isMounted) {
           setData(result);
         }
       } catch (err: any) {
-        if (err.status === 401) {
+        console.error("9. ERRO DASHBOARD:", err);
+        console.error("STATUS:", err?.status);
+        console.error("DATA:", err?.data);
+
+        if (err?.status === 401) {
+          console.log("10. Token inválido → /login");
+
           localStorage.removeItem("access_token");
           localStorage.removeItem("refresh_token");
+
           router.replace("/login");
+
           return;
         }
-
-        console.error("Erro ao carregar dashboard:", err);
       } finally {
         if (isMounted) {
           setLoading(false);
@@ -108,7 +143,10 @@ export default function Dashboard() {
     router,
   ]);
 
-  // Estados de carregamento
+  // =========================================================
+  // 3. ESTADO DE CARREGAMENTO
+  // =========================================================
+
   if (
     isChecking ||
     userLoading ||
@@ -124,6 +162,9 @@ export default function Dashboard() {
     );
   }
 
+  // =========================================================
+  // 4. DASHBOARD
+  // =========================================================
 
   return (
     <div className="p-6 md:p-3 flex flex-col gap-6 md:gap-8">
@@ -176,6 +217,7 @@ export default function Dashboard() {
 
       {/* PROGRESSO */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 md:p-6 flex flex-col gap-4">
+
         <h2 className="text-sm text-muted-foreground">
           Progresso geral
         </h2>
@@ -194,10 +236,12 @@ export default function Dashboard() {
           label="Challenge"
           value={data.challenge?.progresso ?? 0}
         />
+
       </div>
 
       {/* COACH AI */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 md:p-6 flex flex-col gap-4">
+
         <h2 className="text-sm text-muted-foreground">
           Coach AI
         </h2>
@@ -207,18 +251,22 @@ export default function Dashboard() {
         </p>
 
         <div className="flex gap-2 mt-2">
+
           <input
             placeholder="Pergunte algo..."
             className="flex-1 bg-[#1a1a1a] px-3 py-2 rounded-lg text-sm outline-none"
           />
 
-          <button className="bg-[var(--primary)] text-black px-4 rounded-lg text-sm">
+          <button
+            className="bg-[var(--primary)] text-black px-4 rounded-lg text-sm"
+          >
             Enviar
           </button>
+
         </div>
+
       </div>
 
     </div>
   );
 }
-

@@ -1,11 +1,9 @@
-
-
 from pydantic import BaseModel
 
 
 class CoachRequest(BaseModel):
-    mensagem: str | None= ""
-    
-    
+    mensagem: str
+
+
 class PlanoRequest(BaseModel):
-    mensagem: str | None = ""
+    mensagem: str | None = None
