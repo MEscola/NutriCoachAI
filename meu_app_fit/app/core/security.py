@@ -1,11 +1,9 @@
-from operator import sub
-
-from fastapi import HTTPException ,status
-import os
 from datetime import datetime, timedelta, timezone
+from typing import Optional
+from uuid import UUID
+
 from jose import jwt, JWTError
 from passlib.context import CryptContext
-from typing import Optional
 
 from app.core.settings import settings
 from app.core.exceptions import UnauthorizedException
@@ -47,17 +45,21 @@ def create_refresh_token(subject: str) -> str:
     return jwt.encode(payload, settings.SECRET_KEY, settings.ALGORITHM)
 
 
-def decode_token(token: str) -> Optional[str]:
+def decode_token(token: str) -> UUID:
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]) 
 
+        if payload.get("type") != "access": # Verificamos se o tipo do token é "access", caso contrário, lançamos uma exceção
+            raise UnauthorizedException("Token inválido: tipo de token incorreto")
+        
         user_id = payload.get("sub") # Pegamos o valor do campo "sub" do payload, que é onde armazenamos o ID do usuário
         
         if not user_id: # Se o campo "sub" não estiver presente no payload, significa que o token é inválido
             raise UnauthorizedException()
-        
-        return user_id
-    except JWTError:
+            
+        return UUID(user_id) # Retornamos o ID do usuário como um objeto UUID, para garantir que o valor seja válido e seguro
+   
+    except (JWTError, ValueError): # Capturamos tanto erros de decodificação do token quanto erros de conversão para UUID
         raise UnauthorizedException()
             
     
@@ -72,7 +74,8 @@ def decode_full_token(token: str):
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         return payload
-    except JWTError:
+    
+    except (JWTError, ValueError):
         raise UnauthorizedException()
 
 

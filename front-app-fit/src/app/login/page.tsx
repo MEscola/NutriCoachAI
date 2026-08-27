@@ -32,7 +32,7 @@ export default function LoginPage() {
     const token = localStorage.getItem("access_token");
 
     if (token) {
-      router.replace("/dashboard");
+      router.replace("/profile");
       return;
     }
 
@@ -59,7 +59,7 @@ export default function LoginPage() {
         localStorage.removeItem("remember_email");
       }
 
-      router.push("/dashboard");
+      router.push("/profile");
     } catch (err: any) {
       setApiError(err.message || "Erro ao fazer login");
     } finally {

@@ -13,6 +13,7 @@ export function useAuth() {
     const token = localStorage.getItem("access_token");
 
     if (!token) {
+      setIsAuthenticated(false);
       router.replace("/login");
     } else {
       setIsAuthenticated(true);
@@ -21,5 +22,8 @@ export function useAuth() {
     setIsChecking(false);
   }, [router]);
 
-  return { isAuthenticated, isChecking }; // isChecking para evitar flash de conteúdo protegido
+  return {
+    isAuthenticated,
+    isChecking,
+  };
 }

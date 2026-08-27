@@ -27,20 +27,43 @@ export default function Dashboard() {
   const router = useRouter();
 
   const { isAuthenticated, isChecking } = useAuth();
-  const { user, loading: userLoading } = useUser();
 
+  const {
+    user,
+    loading: userLoading,
+    profileComplete,
+  } = useUser();
+
+  // Verifica autenticação e completude do perfil
   useEffect(() => {
-    // Ainda verificando autenticação
+    if (isChecking || userLoading) return;
+
+    if (!isAuthenticated) return;
+
+    if (!user) return;
+
+    if (!profileComplete) {
+      router.replace("/profile");
+    }
+  }, [
+    isAuthenticated,
+    isChecking,
+    user,
+    userLoading,
+    profileComplete,
+    router,
+  ]);
+
+  // Carrega os dados do dashboard
+  useEffect(() => {
     if (isChecking) return;
 
-    // Usuário não autenticado
     if (!isAuthenticated) {
       setLoading(false);
       return;
     }
 
-    // Autenticado, mas ainda carregando o perfil
-    if (userLoading || !user) return;
+    if (userLoading || !user || !profileComplete) return;
 
     let isMounted = true;
 
@@ -54,6 +77,7 @@ export default function Dashboard() {
       } catch (err: any) {
         if (err.status === 401) {
           localStorage.removeItem("access_token");
+          localStorage.removeItem("refresh_token");
           router.replace("/login");
           return;
         }
@@ -76,6 +100,7 @@ export default function Dashboard() {
     isChecking,
     user,
     userLoading,
+    profileComplete,
     router,
   ]);
 
@@ -85,6 +110,7 @@ export default function Dashboard() {
     userLoading ||
     loading ||
     !user ||
+    !profileComplete ||
     !data
   ) {
     return (
@@ -93,6 +119,7 @@ export default function Dashboard() {
       </div>
     );
   }
+
 
   return (
     <div className="p-6 md:p-3 flex flex-col gap-6 md:gap-8">
